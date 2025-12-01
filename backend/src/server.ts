@@ -11,9 +11,9 @@ import helmet from "helmet";
 import cookieParser from "cookie-parser";
 import compression from "compression";
 import limiter from "@/lib/express-rate-limit";
-import { connectToDB, disconnectFromDB } from "./lib/mongoose";
+import { connectToDB, disconnectFromDB } from "@/lib/mongoose";
 import v1Router from "@/routes/v1";
-import logger from "./lib/winston";
+import logger from "@/lib/winston";
 
 // Express app initialization
 const app = express();

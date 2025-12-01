@@ -4,9 +4,11 @@
  */
 
 import { Router } from "express";
+import authRouter from "./auth";
 
 const router = Router();
 
+// Health check route
 router.get("/", (_, res) => {
   res.status(200).json({
     message: "API is up and running!",
@@ -16,5 +18,8 @@ router.get("/", (_, res) => {
     timestamp: new Date().toISOString(),
   });
 });
+
+// Auth routes
+router.use("/auth", authRouter);
 
 export default router;
