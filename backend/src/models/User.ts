@@ -4,6 +4,7 @@
  */
 
 import { model, Schema } from "mongoose";
+import { genSalt, hash } from "bcryptjs";
 
 export interface UserInterface {
   role: "admin" | "user";
@@ -124,5 +125,14 @@ const userSchema = new Schema<UserInterface>(
   },
   { timestamps: true }
 );
+
+// Hash password before saving
+userSchema.pre("save", async function () {
+  // only hash if password is modified (or new)
+  if (!this.isModified("password")) return;
+
+  const salt = await genSalt(10);
+  this.password = await hash(this.password, salt);
+});
 
 export default model<UserInterface>("User", userSchema);

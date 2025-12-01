@@ -4,7 +4,7 @@
  */
 
 import { Router } from "express";
-import handleRegister from "@/controllers/v1/register";
+import handleRegister from "@/controllers/v1/auth/register";
 
 const router = Router();
 

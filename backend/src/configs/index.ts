@@ -5,6 +5,10 @@
 
 import type ms from "ms";
 
+if (!process.env.ADMIN_EMAILS) {
+  throw new Error("ADMIN_EMAILS is missing in environment variables!");
+}
+
 const configs = {
   PORT: process.env.PORT ?? 3000,
   NODE_ENV: process.env.NODE_ENV ?? "development",
@@ -17,6 +21,12 @@ const configs = {
     "15m") as ms.StringValue,
   JWT_REFRESH_EXPIRES_IN: (process.env.JWT_REFRESH_EXPIRES_IN ??
     "7d") as ms.StringValue,
+  WHITELISTED_ADMIN_EMAILS: process.env.ADMIN_EMAILS.split(","),
 };
+
+console.log(
+  "Configs WHITELISTED_ADMIN_EMAILS",
+  configs.WHITELISTED_ADMIN_EMAILS
+);
 
 export default configs;
