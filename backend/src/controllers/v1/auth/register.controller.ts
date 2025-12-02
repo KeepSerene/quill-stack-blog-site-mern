@@ -3,7 +3,7 @@
  * @license Apache-2.0
  */
 
-import User, { UserInterface } from "@/models/User";
+import User, { type UserInterface } from "@/models/User";
 import type { Request, Response } from "express";
 import { generateUsername } from "@/utils";
 import logger from "@/lib/winston";
@@ -17,23 +17,9 @@ type UserData = Pick<UserInterface, "role" | "email" | "password">;
 export default async function handleRegister(req: Request, res: Response) {
   const { role, email, password } = req.body as UserData;
 
-  if (!email || !password) {
-    return res.status(400).json({
-      code: "ValidationError",
-      message: "Email and password are required!",
-    });
-  }
-
-  if (password.length < 8) {
-    return res.status(400).json({
-      code: "ValidationError",
-      message: "Password must be at least 8 characters!",
-    });
-  }
-
   if (role === "admin" && !configs.WHITELISTED_ADMIN_EMAILS.includes(email)) {
     logger.error(
-      `User with email "${email}" tried to register as an admin, but "${email}" is not whitelisted!`
+      `User with email "${email}" tried to register as an admin, but is not whitelisted!`
     );
 
     return res.status(403).json({
@@ -79,7 +65,7 @@ export default async function handleRegister(req: Request, res: Response) {
       expiresAt: refreshTokenExpires,
     });
 
-    // set cookie
+    // set HTTP-only cookie
     res.cookie("refresh-token", refreshToken, {
       secure: configs.NODE_ENV === "production",
       httpOnly: true,
@@ -104,11 +90,10 @@ export default async function handleRegister(req: Request, res: Response) {
       email: newUser.email,
     });
   } catch (error) {
+    logger.error("Error registering user:", error);
     res.status(500).json({
       code: "ServerError",
       message: "Internal server error!",
-      error,
     });
-    logger.error("Error registering user:", error);
   }
 }

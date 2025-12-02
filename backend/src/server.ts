@@ -32,6 +32,7 @@ const corsOptions: CorsOptions = {
       logger.error(`CORS blocked: ${origin}`);
     }
   },
+  credentials: true,
 };
 
 // Middlewares

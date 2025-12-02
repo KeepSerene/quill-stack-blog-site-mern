@@ -25,8 +25,10 @@ export interface UserInterface {
 }
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-// allow alphanumeric, underscore, and hyphen only
+// alphanumeric, underscore, and hyphen only
 const usernameRegex = /^[a-zA-Z0-9_-]+$/;
+// at least one uppercase, one lowercase, and one number
+const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/;
 
 const userSchema = new Schema<UserInterface>(
   {
@@ -61,7 +63,7 @@ const userSchema = new Schema<UserInterface>(
       trim: true,
       maxLength: [50, "Email cannot exceed 50 characters!"],
       validate: {
-        validator: function (value: string) {
+        validator(value: string) {
           return emailRegex.test(value);
         },
         message: "Please provide a valid email address!",
@@ -72,6 +74,13 @@ const userSchema = new Schema<UserInterface>(
       required: [true, "Password is required!"],
       minLength: [8, "Password must be at least 8 characters!"],
       select: false,
+      validate: {
+        validator(value: string) {
+          return passwordRegex.test(value);
+        },
+        message:
+          "Password must contain at least one uppercase letter, one lowercase letter, and one number!",
+      },
     },
     firstName: {
       type: String,

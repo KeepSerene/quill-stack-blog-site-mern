@@ -28,3 +28,19 @@ export function generateRefreshToken(userId: Types.ObjectId) {
     subject: "Access Blogs API",
   });
 }
+
+export function validateAndDecodeAccessToken(token: string) {
+  if (!configs.JWT_ACCESS_SECRET) {
+    throw new Error("JWT_ACCESS_SECRET is missing!");
+  }
+
+  return jwt.verify(token, configs.JWT_ACCESS_SECRET);
+}
+
+export function validateAndDecodeRefreshToken(token: string) {
+  if (!configs.JWT_REFRESH_SECRET) {
+    throw new Error("JWT_REFRESH_SECRET is missing!");
+  }
+
+  return jwt.verify(token, configs.JWT_REFRESH_SECRET);
+}
