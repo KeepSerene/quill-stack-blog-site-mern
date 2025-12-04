@@ -5,6 +5,8 @@
 
 import { Router } from "express";
 import authRouter from "./auth.route";
+import usersRouter from "./users.route";
+import blogsRouter from "./blogs.route";
 
 const router = Router();
 
@@ -21,5 +23,11 @@ router.get("/", (_, res) => {
 
 // Auth routes
 router.use("/auth", authRouter);
+
+// Users routes
+router.use("/users", usersRouter);
+
+// Blogs routes
+router.use("/blogs", blogsRouter);
 
 export default router;

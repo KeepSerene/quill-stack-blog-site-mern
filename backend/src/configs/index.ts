@@ -20,6 +20,8 @@ const configs = {
   WHITELISTED_ADMIN_EMAILS: process.env.ADMIN_EMAILS
     ? process.env.ADMIN_EMAILS.split(",")
     : [],
+  DEFAULT_RESPONSE_LIMIT: 20,
+  DEFAULT_RESPONSE_OFFSET: 0, // how many items to skip from the start
 };
 
 export default configs;

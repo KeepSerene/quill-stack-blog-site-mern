@@ -5,10 +5,12 @@
 
 import { Router } from "express";
 import { body, cookie } from "express-validator";
-import handleValidationErrors from "@/middlewares/validation-errors";
+import handleValidationErrors from "@/middlewares/validation-errors.middleware";
 import handleRegister from "@/controllers/v1/auth/register.controller";
 import handleLogin from "@/controllers/v1/auth/login.controller";
 import handleRefreshToken from "@/controllers/v1/auth/refresh-token.controller";
+import handleLogout from "@/controllers/v1/auth/logout.controller";
+import handleAuthenticate from "@/middlewares/authenticate.middleware";
 
 const router = Router();
 
@@ -82,5 +84,6 @@ router.post(
 );
 
 // POST /api/v1/auth/logout
+router.post("/logout", handleAuthenticate, handleLogout);
 
 export default router;
