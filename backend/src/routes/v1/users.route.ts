@@ -21,12 +21,14 @@ const router = Router();
 const getAllUsersValidation = [
   query("limit")
     .optional()
+    .toInt()
     .isInt({ min: 1, max: 50 })
-    .withMessage("Query limit must be between 1 and 50."),
+    .withMessage("Limit must be between 1 and 50"),
   query("offset")
     .optional()
+    .toInt()
     .isInt({ min: 0 })
-    .withMessage("Query offset must be a positive integer!"),
+    .withMessage("Offset must be a non-negative integer"),
 ];
 
 const userByIdValidation = param("userId")

@@ -25,11 +25,16 @@ export default async function handleGetAllUsers(req: Request, res: Response) {
 
     res.status(200).json({
       message: "Fetched users successfully!",
-      total: userCount,
-      count: users.length,
-      limit,
-      offset,
-      users,
+      data: {
+        users,
+        pagination: {
+          total: userCount, // total matching the query
+          count: users.length, // current page count
+          limit,
+          offset,
+          hasMore: userCount > users.length + offset,
+        },
+      },
     });
   } catch (error) {
     logger.error("Error fetching all users:", error);
