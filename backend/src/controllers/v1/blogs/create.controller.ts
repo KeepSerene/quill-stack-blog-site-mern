@@ -44,7 +44,7 @@ export default async function handleCreateBlog(req: Request, res: Response) {
     ALLOWED_ATTR: ["href", "src", "alt", "class"],
   });
 
-  // Validation check - banner should be set by upload middleware
+  // validation check - banner should be set by upload middleware
   if (!banner || !banner.url || !banner.publicId) {
     return res.status(400).json({
       code: "ValidationError",
@@ -71,17 +71,11 @@ export default async function handleCreateBlog(req: Request, res: Response) {
 
     res.status(201).json({
       message: "Blog created successfully!",
-      blog: {
-        id: newBlog._id,
-        title: newBlog.title,
-        slug: newBlog.slug,
-        status: newBlog.status,
-        banner: newBlog.banner,
-      },
+      blog: newBlog,
     });
   } catch (error: any) {
+    // handle duplicate slug error
     if (error.code === 11000) {
-      // handle duplicate slug error
       logger.warn("Duplicate slug detected", { slug: error.keyValue?.slug });
 
       return res.status(409).json({

@@ -4,7 +4,7 @@
  */
 
 import type { NextFunction, Request, Response } from "express";
-// import Blog from "@/models/Blog";
+import Blog from "@/models/Blog";
 import uploadToCloudinary from "@/lib/cloudinary";
 import logger from "@/lib/winston";
 import type { UploadApiErrorResponse } from "cloudinary";
@@ -24,6 +24,7 @@ const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
  */
 export default function handleBlogBannerImageUpload(method: "post" | "put") {
   return async (req: Request, res: Response, next: NextFunction) => {
+    // If it's an update (PUT) and no file was uploaded, skip image handling
     if (method === "put" && !req.file) return next();
 
     if (!req.file) {
@@ -40,44 +41,62 @@ export default function handleBlogBannerImageUpload(method: "post" | "put") {
       });
     }
 
-    // const { blogId } = req.params;
-
     try {
-      // For PUT method, we would fetch existing blog and pass its publicId
-      // to Cloudinary for replacement (this maintains the same URL/ID)
-      //   const blog = await Blog.findById(blogId).select("banner.publicId").exec();
+      const blogId = req.params.blogId; // may be undefined for POST
 
-      //   if (!blog) {
-      //     return res.status(404).json({
-      //       code: "NotFound",
-      //       message: "Blog not found!",
-      //     });
-      //   }
+      // For PUT: we need the existing blog to obtain its current publicId so Cloudinary can replace the image
+      // For POST: we are creating a new blog and should NOT try to fetch any blog document
+      let publicIdToUse: string | undefined = undefined;
 
-      // For PUT: would pass blog.banner.publicId to replace existing image
-      // For POST: creates new image with auto-generated ID
-      const data = await uploadToCloudinary(
-        req.file.buffer
-        // blog.banner.publicId.replace("quill-stack-banners/", "")
-      );
+      if (method === "put") {
+        if (!blogId) {
+          return res.status(400).json({
+            code: "ValidationError",
+            message: "Blog ID is required to update banner image!",
+          });
+        }
 
-      // Handle upload failure
+        // find blog to get existing publicId (to replace image in Cloudinary)
+        const blog = await Blog.findById(blogId)
+          .select("banner.publicId")
+          .exec();
+
+        if (!blog) {
+          return res.status(404).json({
+            code: "NotFound",
+            message: "Blog not found!",
+          });
+        }
+
+        // prepare publicId for replacement (strip folder prefix if any)
+        publicIdToUse = blog.banner.publicId
+          ? blog.banner.publicId.replace(/^quill-stack-banners\//, "")
+          : undefined;
+      } else {
+        // POST case: do not look up any blog; let Cloudinary auto-generate a new public ID.
+        publicIdToUse = undefined;
+      }
+
+      const data = await uploadToCloudinary(req.file.buffer, publicIdToUse);
+
+      // handle upload failure
       if (!data) {
         logger.error(
           "Cloudinary upload returned undefined - possible stream error",
           {
             fileSize: req.file.size,
             mimeType: req.file.mimetype,
-            // blogId,
+            blogId,
           }
         );
 
         return res.status(500).json({
           code: "ServerError",
-          message: "Failed to upload image. Please try again!",
+          message: "Image upload failed. Please try again!",
         });
       }
 
+      // build the new banner metadata to attach to req.body for downstream controllers
       const newBanner = {
         publicId: data.public_id,
         url: data.secure_url,
@@ -88,24 +107,27 @@ export default function handleBlogBannerImageUpload(method: "post" | "put") {
       logger.info("Blog banner uploaded successfully to Cloudinary", {
         publicId: data.public_id,
         dimensions: `${data.width}x${data.height}`,
-        // blogId,
+        blogId,
       });
 
       // this will be picked up by the create/update controller
       req.body.banner = newBanner;
 
-      next();
+      return next();
     } catch (error: UploadApiErrorResponse | any) {
       logger.error("Cloudinary upload failed", {
         errorName: error.name,
         errorMessage: error.message,
         httpCode: error.http_code,
-        fileSize: req.file.size,
-        mimeType: req.file.mimetype,
+        fileSize: req.file?.size,
+        mimeType: req.file?.mimetype,
       });
 
-      res.status(error.http_code || 500).json({
-        code: error.http_code < 500 ? "ValidationError" : error.name,
+      return res.status(error.http_code || 500).json({
+        code:
+          error.http_code && error.http_code < 500
+            ? "ValidationError"
+            : "ServerError",
         message: error.message || "Image upload failed. Please try again!",
       });
     }

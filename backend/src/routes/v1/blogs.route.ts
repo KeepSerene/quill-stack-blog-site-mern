@@ -9,13 +9,17 @@ import handleAuthorize from "@/middlewares/authorize.middleware";
 import handleCreateBlog from "@/controllers/v1/blogs/create.controller";
 import multer from "multer";
 import handleBlogBannerImageUpload from "@/middlewares/upload.middleware";
-import { body, query } from "express-validator";
+import { body, param, query } from "express-validator";
 import handleValidationErrors from "@/middlewares/validation-errors.middleware";
 import handleGetAllBlogs from "@/controllers/v1/blogs/get-all.controller";
+import handleGetBlogBySlug from "@/controllers/v1/blogs/get-by-slug.controller";
+import handleUpdateBlogById from "@/controllers/v1/blogs/update-by-id.controller";
+import handleDeleteBlogById from "@/controllers/v1/blogs/delete-by-id.controller";
 
 const router = Router();
 const multerInstance = multer();
 
+// Express validator middlewares
 const createBlogValidation = [
   body("title")
     .trim()
@@ -48,6 +52,46 @@ const getAllBlogsValidation = [
     .withMessage("Offset must be a non-negative integer!"),
 ];
 
+const getBlogBySlugValidation = [
+  param("slug")
+    .exists({ checkFalsy: true })
+    .withMessage("Slug is required!")
+    .isString()
+    .withMessage("Slug must be a string!")
+    .trim()
+    .matches(/^[a-z0-9\-]+$/)
+    .withMessage(
+      "Slug can only contain lowercase letters, numbers, and hyphens!"
+    ),
+];
+
+const updateBlogByIdValidation = [
+  param("blogId").isMongoId().withMessage("Invalid blog ID!"),
+  body("title")
+    .optional()
+    .trim()
+    .notEmpty()
+    .withMessage("Title is required!")
+    .isLength({ min: 3, max: 180 })
+    .withMessage("Title must be between 3 and 180 characters!"),
+  body("content")
+    .optional()
+    .trim()
+    .notEmpty()
+    .withMessage("Content is required!")
+    .isLength({ min: 10 })
+    .withMessage("Content must be at least 10 characters!"),
+  body("status")
+    .optional()
+    .isIn(["draft", "published"])
+    .withMessage("Status must be either 'draft' or 'published'"),
+];
+
+const deleteBlogByIdValidation = param("blogId")
+  .isMongoId()
+  .withMessage("Invalid blog ID!");
+
+// POST /api/v1/blogs
 router.post(
   "/",
   handleAuthenticate,
@@ -71,6 +115,38 @@ router.get(
   getAllBlogsValidation,
   handleValidationErrors,
   handleGetAllBlogs
+);
+
+// GET /api/v1/blogs/:slug
+router.get(
+  "/:slug",
+  handleAuthenticate,
+  handleAuthorize(["admin", "user"]),
+  getBlogBySlugValidation,
+  handleValidationErrors,
+  handleGetBlogBySlug
+);
+
+// PUT /api/v1/blogs/:blogId
+router.put(
+  "/:blogId",
+  handleAuthenticate,
+  handleAuthorize(["admin"]),
+  multerInstance.single("banner-image"),
+  updateBlogByIdValidation,
+  handleValidationErrors,
+  handleBlogBannerImageUpload("put"),
+  handleUpdateBlogById
+);
+
+// DELETE /api/v1/blogs/:blogId
+router.delete(
+  "/:blogId",
+  handleAuthenticate,
+  handleAuthorize(["admin"]),
+  deleteBlogByIdValidation,
+  handleValidationErrors,
+  handleDeleteBlogById
 );
 
 export default router;

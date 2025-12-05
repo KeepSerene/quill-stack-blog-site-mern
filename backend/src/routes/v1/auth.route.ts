@@ -14,6 +14,7 @@ import handleAuthenticate from "@/middlewares/authenticate.middleware";
 
 const router = Router();
 
+// Express validator middlewares
 const registerValidation = [
   body("email")
     .trim()

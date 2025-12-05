@@ -7,6 +7,7 @@ import { Router } from "express";
 import authRouter from "./auth.route";
 import usersRouter from "./users.route";
 import blogsRouter from "./blogs.route";
+import likesRouter from "./likes.route";
 
 const router = Router();
 
@@ -29,5 +30,8 @@ router.use("/users", usersRouter);
 
 // Blogs routes
 router.use("/blogs", blogsRouter);
+
+// Likes routes
+router.use("/likes", likesRouter);
 
 export default router;

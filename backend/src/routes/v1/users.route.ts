@@ -15,9 +15,11 @@ import handleGetCurrentUser from "@/controllers/v1/users/get-current.controller"
 import handleUpdateCurrentUser from "@/controllers/v1/users/update-current.controller";
 import User from "@/models/User";
 import handleDeleteCurrentUser from "@/controllers/v1/users/delete-current.controller";
+import handleGetBlogsByUserId from "@/controllers/v1/users/get-blogs-by-user-id.controller";
 
 const router = Router();
 
+// Express validator middlewares
 const getAllUsersValidation = [
   query("limit")
     .optional()
@@ -32,7 +34,6 @@ const getAllUsersValidation = [
 ];
 
 const userByIdValidation = param("userId")
-  .notEmpty()
   .isMongoId()
   .withMessage("Invalid user ID!");
 
@@ -111,8 +112,61 @@ const updateUserValidation = [
     .withMessage("URL cannot exceed 100 characters!"),
 ];
 
+const getBlogsByUserIdValidation = [
+  param("userId").isMongoId().withMessage("Invalid user ID!"),
+  query("limit")
+    .optional()
+    .toInt()
+    .isInt({ min: 1, max: 50 })
+    .withMessage("Limit must be between 1 and 50"),
+  query("offset")
+    .optional()
+    .toInt()
+    .isInt({ min: 0 })
+    .withMessage("Offset must be a non-negative integer!"),
+];
+
 /**
- * Admin routes
+ * IMPORTANT: Specific routes MUST come BEFORE parameterized routes!
+ * Express matches routes in order, so /current must be registered before /:userId
+ * Otherwise, "current" will be treated as a userId parameter
+ */
+
+/**
+ * All users routes (specific routes first)
+ */
+
+// GET /api/v1/users/current
+// Must be before "/:userId" route
+router.get(
+  "/current",
+  handleAuthenticate,
+  handleAuthorize(["admin", "user"]),
+  handleGetCurrentUser
+);
+
+// PUT /api/v1/users/current
+// Must be before "/:userId" route
+router.put(
+  "/current",
+  handleAuthenticate,
+  handleAuthorize(["admin", "user"]),
+  updateUserValidation,
+  handleValidationErrors,
+  handleUpdateCurrentUser
+);
+
+// DELETE /api/v1/users/current
+// Must be before "/:userId" route
+router.delete(
+  "/current",
+  handleAuthenticate,
+  handleAuthorize(["admin", "user"]),
+  handleDeleteCurrentUser
+);
+
+/**
+ * Admin routes (parameterized routes come after specific routes)
  */
 
 // GET /api/v1/users
@@ -126,6 +180,7 @@ router.get(
 );
 
 // GET /api/v1/users/:userId
+// Parameterized route comes AFTER "/current" routes
 router.get(
   "/:userId",
   handleAuthenticate,
@@ -136,6 +191,7 @@ router.get(
 );
 
 // DELETE /api/v1/users/:userId
+// Parameterized route comes AFTER "/current" routes
 router.delete(
   "/:userId",
   handleAuthenticate,
@@ -146,33 +202,17 @@ router.delete(
 );
 
 /**
- * All users routes
+ * User blog routes (admins + users)
  */
 
-// GET /api/v1/users/current
+// GET /api/v1/users/:userId/blogs
 router.get(
-  "/current",
+  "/:userId/blogs",
   handleAuthenticate,
   handleAuthorize(["admin", "user"]),
-  handleGetCurrentUser
-);
-
-// PUT /api/v1/users/current
-router.put(
-  "/current",
-  handleAuthenticate,
-  handleAuthorize(["admin", "user"]),
-  updateUserValidation,
+  getBlogsByUserIdValidation,
   handleValidationErrors,
-  handleUpdateCurrentUser
-);
-
-// DELETE /api/v1/users/current
-router.delete(
-  "/current",
-  handleAuthenticate,
-  handleAuthorize(["admin", "user"]),
-  handleDeleteCurrentUser
+  handleGetBlogsByUserId
 );
 
 export default router;
