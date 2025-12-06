@@ -64,7 +64,7 @@ export default async function handleDeleteComment(req: Request, res: Response) {
     await Comment.deleteOne({ _id: commentId });
 
     // Reduce comment count and save blog
-    blog.commentCount--;
+    blog.commentCount = Math.max(0, blog.commentCount - 1);
     await blog.save();
 
     logger.info("Comment deleted successfully!", {

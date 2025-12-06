@@ -51,6 +51,17 @@ export default async function handleDeleteUserById(
         deletedCount: deletedBlogLikes.deletedCount,
       });
 
+      // Get comment IDs for likes cleanup
+      const commentIds = await Comment.find({ blogId: { $in: blogIds } })
+        .select("_id")
+        .lean()
+        .then((comments) => comments.map((c) => c._id));
+
+      // Delete likes on comments associated with user's blogs
+      if (commentIds.length > 0) {
+        await Like.deleteMany({ commentId: { $in: commentIds } });
+      }
+
       // Delete comments associated with user's blogs
       const deletedBlogComments = await Comment.deleteMany({
         blogId: { $in: blogIds },
