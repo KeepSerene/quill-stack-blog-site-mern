@@ -76,9 +76,10 @@ app.use(limiter);
       });
     });
 
-    app.listen(configs.PORT, () =>
-      logger.info(`Server running on port ${configs.PORT}`)
-    );
+    app.listen(configs.PORT, () => {
+      logger.info(`Server running on port ${configs.PORT}`);
+      logger.info(`Environment: ${configs.NODE_ENV}`);
+    });
   } catch (error) {
     logger.error("Failed to start the server:", error);
 
