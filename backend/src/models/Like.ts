@@ -30,7 +30,7 @@ const likeSchema = new Schema<LikeDocument>(
   { timestamps: true }
 );
 
-// Compound index: Ensures a user can only like a blog/comment once
+// Compound index: ensures a user can only like a blog/comment once
 // Also improves query performance when checking existing likes
 likeSchema.index({ blogId: 1, userId: 1 }, { unique: true, sparse: true });
 likeSchema.index({ commentId: 1, userId: 1 }, { unique: true, sparse: true });

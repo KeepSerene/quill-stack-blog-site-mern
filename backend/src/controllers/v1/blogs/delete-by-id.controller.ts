@@ -8,6 +8,8 @@ import { v2 as cloudinary } from "cloudinary";
 import logger from "@/lib/winston";
 import User from "@/models/User";
 import Blog from "@/models/Blog";
+import Like from "@/models/Like";
+import Comment from "@/models/Comment";
 
 export default async function handleDeleteBlogById(
   req: Request,
@@ -27,7 +29,7 @@ export default async function handleDeleteBlogById(
     }
 
     const blog = await Blog.findById(blogId)
-      .select("author banner.publicId")
+      .select("author banner.publicId title slug status")
       .lean()
       .exec();
 
@@ -39,8 +41,6 @@ export default async function handleDeleteBlogById(
     }
 
     if (blog.author !== userId && user.role !== "admin") {
-      // one admin cannot delete another admin's blog
-      // also, normal users can't delete a blog
       logger.warn("A user tried to delete a blog without permissions!", {
         userId,
         blog: {
@@ -53,16 +53,32 @@ export default async function handleDeleteBlogById(
 
       return res.status(403).json({
         code: "AuthorizationError",
-        message: "Access denied, insufficient permissons!",
+        message: "Access denied, insufficient permissions!",
       });
     }
 
+    // Delete associated likes
+    const deletedLikes = await Like.deleteMany({ blogId });
+    logger.info("Deleted likes associated with blog!", {
+      blogId,
+      deletedCount: deletedLikes.deletedCount,
+    });
+
+    // Delete associated comments
+    const deletedComments = await Comment.deleteMany({ blogId });
+    logger.info("Deleted comments associated with blog!", {
+      blogId,
+      deletedCount: deletedComments.deletedCount,
+    });
+
+    // Delete blog banner from Cloudinary
     await cloudinary.uploader.destroy(blog.banner.publicId);
     logger.info("Blog banner image deleted from Cloudinary!", {
       blogId,
       bannerPublicId: blog.banner.publicId,
     });
 
+    // Delete blog
     await Blog.deleteOne({ _id: blogId });
     logger.info("Blog deleted successfully!", { blogId });
 

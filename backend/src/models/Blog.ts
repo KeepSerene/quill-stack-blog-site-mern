@@ -88,7 +88,7 @@ const blogSchema = new Schema<BlogDocument>(
   }
 );
 
-// Pre-validation: auto-generate slug from title if slug not provided
+// Validation: auto-generate slug from title if slug not provided
 blogSchema.pre("validate", async function () {
   if (this.title && !this.slug) {
     this.slug = generateSlug(this.title);

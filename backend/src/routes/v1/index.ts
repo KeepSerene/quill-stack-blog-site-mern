@@ -4,10 +4,12 @@
  */
 
 import { Router } from "express";
-import authRouter from "./auth.route";
-import usersRouter from "./users.route";
-import blogsRouter from "./blogs.route";
-import likesRouter from "./likes.route";
+import authRouter from "@/routes/v1/auth.route";
+import usersRouter from "@/routes/v1/users.route";
+import blogsRouter from "@/routes/v1/blogs.route";
+import likesRouter from "@/routes/v1/likes.route";
+import commentsRouter from "@/routes/v1/comments.route";
+import viewsRouter from "@/routes/v1/views.route";
 
 const router = Router();
 
@@ -33,5 +35,11 @@ router.use("/blogs", blogsRouter);
 
 // Likes routes
 router.use("/likes", likesRouter);
+
+// Comments routes
+router.use("/comments", commentsRouter);
+
+// Views routes
+router.use("/views", viewsRouter);
 
 export default router;
