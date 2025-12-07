@@ -19,7 +19,6 @@ router.get("/", (_, res) => {
     message: "API is up and running!",
     status: "ok",
     version: "1.0.0",
-    docs: "",
     timestamp: new Date().toISOString(),
   });
 });
