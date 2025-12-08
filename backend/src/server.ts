@@ -32,6 +32,7 @@ const corsOptions: CorsOptions = {
       logger.error(`CORS blocked: ${origin}`);
     }
   },
+  methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true,
 };
 

@@ -69,6 +69,11 @@ export default async function handleLogin(req: Request, res: Response) {
       maxAge: ms(configs.JWT_REFRESH_EXPIRES_IN),
     });
 
+    logger.info("User logged in successfully!", {
+      userId: user._id,
+      email: user.email,
+    });
+
     // send response
     res.status(200).json({
       message: "User logged in successfully!",
@@ -78,11 +83,6 @@ export default async function handleLogin(req: Request, res: Response) {
         email: user.email,
       },
       accessToken,
-    });
-
-    logger.info("User logged in successfully!", {
-      userId: user._id,
-      email: user.email,
     });
   } catch (error) {
     logger.error("Error logging in user:", error);
