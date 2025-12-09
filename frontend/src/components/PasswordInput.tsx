@@ -1,3 +1,8 @@
+/**
+ * @copyright 2025 Dhrubajyoti Bhattacharjee
+ * @license Apache-2.0
+ */
+
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";

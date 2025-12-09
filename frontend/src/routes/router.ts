@@ -7,26 +7,39 @@
 import { createBrowserRouter } from "react-router";
 
 // Pages
-import Login from "@/pages/auth/Login";
-import Register from "@/pages/auth/Register";
+import LoginPage from "@/pages/auth/Login";
+import RegisterPage from "@/pages/auth/Register";
+
+// Layouts
+import RootLayout from "@/layouts/Root";
 
 // Actions
+import loginAction from "@/routes/actions/login";
 import registerAction from "@/routes/actions/register";
+
+// Loaders
+import refreshTokenLoader from "@/routes/loaders/refreshTokenLoader";
 
 const router = createBrowserRouter([
   // Auth routes
   {
     path: "/login",
-    Component: Login,
+    Component: LoginPage,
+    action: loginAction,
   },
   {
     path: "/register",
-    Component: Register,
+    Component: RegisterPage,
     action: registerAction,
+  },
+  {
+    path: "/refresh-token",
+    loader: refreshTokenLoader,
   },
   // Admin + user routes
   {
     path: "/",
+    Component: RootLayout,
     children: [
       {
         index: true,

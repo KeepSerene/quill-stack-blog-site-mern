@@ -1,6 +1,14 @@
+/**
+ * @copyright 2025 Dhrubajyoti Bhattacharjee
+ * @license Apache-2.0
+ */
+
 import React from "react";
 import { Link } from "react-router";
+import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
+
+const MotionLink = motion.create(Link);
 
 type LogoSize = "sm" | "md" | "lg" | "xl";
 
@@ -33,7 +41,14 @@ const Logo: React.FC<LogoProps> = ({
   const textSizeClass = textSizeClasses[size] ?? textSizeClasses.md;
 
   return (
-    <Link to="/" className={cn("inline-flex items-center gap-2.5", className)}>
+    <MotionLink
+      to="/"
+      whileHover={{ scale: 1.05 }}
+      whileFocus={{ scale: 0.9 }}
+      whileTap={{ scale: 0.9 }}
+      viewTransition
+      className={cn("inline-flex items-center gap-1", className)}
+    >
       {/* Icon */}
       <span className={cn("shrink-0 aspect-square", iconSizeClass)}>
         <svg
@@ -53,15 +68,14 @@ const Logo: React.FC<LogoProps> = ({
       {!iconOnly && (
         <span
           className={cn(
-            "font-sans text-foreground font-semibold tracking-tight transition-colors duration-300",
+            "font-sans text-primary font-semibold tracking-tight transition-colors duration-300",
             textSizeClass
           )}
         >
-          <span className="text-primary-foreground">Quill</span>
-          <span className="text-primary">Stack</span>
+          QuillStack
         </span>
       )}
-    </Link>
+    </MotionLink>
   );
 };
 

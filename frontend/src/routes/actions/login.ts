@@ -8,14 +8,12 @@ import type { ActionFunction } from "react-router";
 import type { ActionResponse, AuthResponse } from "@/types";
 import { AxiosError } from "axios";
 
-const registerAction: ActionFunction = async ({ request }) => {
+const loginAction: ActionFunction = async ({ request }) => {
   try {
     const registerFormData = await request.json();
-    const response = await quillStackApi.post(
-      "/auth/register",
-      registerFormData,
-      { withCredentials: true }
-    );
+    const response = await quillStackApi.post("/auth/login", registerFormData, {
+      withCredentials: true,
+    });
     const responseData = response.data as AuthResponse;
 
     localStorage.setItem("access-token", responseData.accessToken);
@@ -27,7 +25,7 @@ const registerAction: ActionFunction = async ({ request }) => {
     } as ActionResponse<AuthResponse>;
   } catch (err) {
     if (err instanceof AxiosError) {
-      console.error("Error registering user:", err);
+      console.error("Error loggin in user:", err);
 
       return {
         ok: false,
@@ -39,4 +37,4 @@ const registerAction: ActionFunction = async ({ request }) => {
   }
 };
 
-export default registerAction;
+export default loginAction;

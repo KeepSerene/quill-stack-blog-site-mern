@@ -1,10 +1,20 @@
+/**
+ * @copyright 2025 Dhrubajyoti Bhattacharjee
+ * @license Apache-2.0
+ */
+
 import type React from "react";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { Link, useFetcher, useNavigate } from "react-router";
-import type { ActionResponse, AuthResponse } from "@/types";
+import type {
+  ActionResponse,
+  AuthResponse,
+  ErrorResponse,
+  ValidationError,
+} from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
@@ -18,7 +28,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import PasswordInput from "@/components/PasswordInput";
 import { Button } from "./ui/button";
-import { Loader2, LogIn } from "lucide-react";
+import { Loader, LogIn } from "lucide-react";
+import { toast } from "sonner";
 
 type LoginFormField = "email" | "password";
 
@@ -31,13 +42,14 @@ const LOGIN_FORM_TEXTS = {
 // Must contain at least one uppercase letter, one lowercase letter, and one number
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/;
 
-const registerFormSchema = z.object({
+const loginFormSchema = z.object({
   email: z
     .email({ error: "Please provide a valid email address!" })
     .trim()
     .max(50, "Email cannot exceed 50 characters!"),
   password: z
     .string()
+    .trim()
     .min(8, "Password must be at least 8 characters!")
     .refine((value) => passwordRegex.test(value), {
       error:
@@ -45,23 +57,78 @@ const registerFormSchema = z.object({
     }),
 });
 
-function LoginForm({ className, ...props }: React.ComponentProps<"div">) {
+function LoginForm({
+  className,
+  ...props
+}: React.ComponentPropsWithoutRef<"div">) {
   const navigate = useNavigate();
   const fetcher = useFetcher();
   const loginResponse = fetcher.data as ActionResponse<AuthResponse>;
   const isLoading = fetcher.state !== "idle";
 
-  const form = useForm<z.infer<typeof registerFormSchema>>({
-    resolver: zodResolver(registerFormSchema),
+  const form = useForm<z.infer<typeof loginFormSchema>>({
+    resolver: zodResolver(loginFormSchema),
     defaultValues: {
       email: "",
       password: "",
     },
   });
 
+  // Handle server responses
+  useEffect(() => {
+    if (!loginResponse) return;
+
+    if (loginResponse.ok) {
+      navigate("/", { replace: true, viewTransition: true });
+
+      return;
+    }
+
+    if (!loginResponse.error) return;
+
+    if (loginResponse.error.code === "AuthenticationError") {
+      const authorizationError = loginResponse.error as ErrorResponse;
+
+      toast.error(authorizationError.message, {
+        position: "top-center",
+        duration: 5000,
+      });
+    }
+
+    if (loginResponse.error.code === "ValidationError") {
+      const validationErrors = loginResponse.error as ValidationError;
+
+      Object.entries(validationErrors.errors).forEach((value) => {
+        const [_, validationError] = value;
+        const fieldName = validationError.path as LoginFormField;
+        form.setError(
+          fieldName,
+          {
+            type: "custom",
+            message: validationError.message,
+          },
+          { shouldFocus: true }
+        );
+      });
+    }
+  }, [loginResponse]);
+
+  // Handle submit
   const onSubmit = useCallback(
-    async (values: z.infer<typeof registerFormSchema>) => {
-      console.log(values);
+    async (values: z.infer<typeof loginFormSchema>) => {
+      try {
+        await fetcher.submit(values, {
+          method: "post",
+          action: "/login",
+          encType: "application/json",
+        });
+      } catch (error) {
+        console.error("Error submitting login form:", error);
+        toast.error("Failed to submit login form!", {
+          position: "top-center",
+          duration: 5000,
+        });
+      }
     },
     []
   );
@@ -128,12 +195,12 @@ function LoginForm({ className, ...props }: React.ComponentProps<"div">) {
                 >
                   {isLoading ? (
                     <>
-                      <Loader2 />
+                      <Loader className="size-4 animate-spin" />
                       <span>Signing in...</span>
                     </>
                   ) : (
                     <>
-                      <LogIn />
+                      <LogIn className="size-4" />
                       <span>Sign in</span>
                     </>
                   )}

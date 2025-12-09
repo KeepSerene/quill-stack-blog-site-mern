@@ -1,3 +1,8 @@
+/**
+ * @copyright 2025 Dhrubajyoti Bhattacharjee
+ * @license Apache-2.0
+ */
+
 import type React from "react";
 import { useCallback, useEffect } from "react";
 import { cn } from "@/lib/utils";
@@ -23,7 +28,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import PasswordInput from "@/components/PasswordInput";
 import { Button } from "./ui/button";
-import { Loader2, LogIn } from "lucide-react";
+import { Loader, UserPlus2 } from "lucide-react";
 import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
 import { Label } from "./ui/label";
 import { toast } from "sonner";
@@ -39,7 +44,7 @@ const REGISTER_FORM_TEXTS = {
 // Must contain at least one uppercase letter, one lowercase letter, and one number
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/;
 
-const loginFormSchema = z.object({
+const registerFormSchema = z.object({
   role: z.enum(["admin", "user"], { error: "Please provide a valid role!" }),
   email: z
     .email({ error: "Please provide a valid email address!" })
@@ -47,6 +52,7 @@ const loginFormSchema = z.object({
     .max(50, "Email cannot exceed 50 characters!"),
   password: z
     .string()
+    .trim()
     .min(8, "Password must be at least 8 characters!")
     .refine((value) => passwordRegex.test(value), {
       error:
@@ -54,26 +60,30 @@ const loginFormSchema = z.object({
     }),
 });
 
-function RegisterForm({ className, ...props }: React.ComponentProps<"div">) {
+function RegisterForm({
+  className,
+  ...props
+}: React.ComponentPropsWithoutRef<"div">) {
   const navigate = useNavigate();
   const fetcher = useFetcher();
   const registerResponse = fetcher.data as ActionResponse<AuthResponse>;
   const isLoading = fetcher.state !== "idle";
 
-  const form = useForm<z.infer<typeof loginFormSchema>>({
-    resolver: zodResolver(loginFormSchema),
+  const form = useForm<z.infer<typeof registerFormSchema>>({
+    resolver: zodResolver(registerFormSchema),
     defaultValues: {
+      role: "user",
       email: "",
       password: "",
     },
   });
 
-  // Handle server error responses
+  // Handle server responses
   useEffect(() => {
     if (!registerResponse) return;
 
     if (registerResponse.ok) {
-      navigate("/dashboard", { replace: true, viewTransition: true });
+      navigate("/", { replace: true, viewTransition: true });
 
       return;
     }
@@ -109,7 +119,7 @@ function RegisterForm({ className, ...props }: React.ComponentProps<"div">) {
 
   // Handle submit
   const onSubmit = useCallback(
-    async (values: z.infer<typeof loginFormSchema>) => {
+    async (values: z.infer<typeof registerFormSchema>) => {
       try {
         await fetcher.submit(values, {
           method: "post",
@@ -218,12 +228,12 @@ function RegisterForm({ className, ...props }: React.ComponentProps<"div">) {
                 >
                   {isLoading ? (
                     <>
-                      <Loader2 />
+                      <Loader className="size-4 animate-spin" />
                       <span>Signing up...</span>
                     </>
                   ) : (
                     <>
-                      <LogIn />
+                      <UserPlus2 className="size-4" />
                       <span>Sign up</span>
                     </>
                   )}
