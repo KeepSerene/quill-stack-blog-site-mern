@@ -6,16 +6,16 @@
 import type { User } from "@/types";
 import { useEffect, useState } from "react";
 
-export type UserDocument = Pick<User, "role" | "username" | "email">;
+export type UserProfile = Pick<User, "role" | "username" | "email">;
 
 function useUser() {
-  const [user, setUser] = useState<UserDocument>();
+  const [user, setUser] = useState<UserProfile>();
 
   useEffect(() => {
     const userJson = localStorage.getItem("user");
 
     if (userJson) {
-      const userInfo = JSON.parse(userJson) as UserDocument;
+      const userInfo = JSON.parse(userJson) as UserProfile;
       setUser(userInfo);
     }
   }, []);
