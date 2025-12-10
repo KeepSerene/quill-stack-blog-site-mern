@@ -40,7 +40,7 @@ import type { ActionResponse } from "@/types";
 const usernameRegex = /^[a-zA-Z0-9_-]+$/;
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-export const profileFormSchema = z.object({
+const profileFormSchema = z.object({
   firstName: z
     .string()
     .min(2, "First name must be at least 2 characters!")
