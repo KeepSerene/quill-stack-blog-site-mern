@@ -16,6 +16,7 @@ import RootLayout from "@/layouts/Root";
 // Actions
 import loginAction from "@/routes/actions/login";
 import registerAction from "@/routes/actions/register";
+import settingsAction from "@/routes/actions/settings";
 
 // Loaders
 import refreshTokenLoader from "@/routes/loaders/refreshTokenLoader";
@@ -54,6 +55,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/settings",
+    action: settingsAction,
   },
   // Admin routes
   {

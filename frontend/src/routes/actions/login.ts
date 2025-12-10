@@ -10,8 +10,8 @@ import { AxiosError } from "axios";
 
 const loginAction: ActionFunction = async ({ request }) => {
   try {
-    const registerFormData = await request.json();
-    const response = await quillStackApi.post("/auth/login", registerFormData, {
+    const loginFormData = await request.json();
+    const response = await quillStackApi.post("/auth/login", loginFormData, {
       withCredentials: true,
     });
     const responseData = response.data as AuthResponse;

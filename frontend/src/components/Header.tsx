@@ -70,7 +70,7 @@ function Header({
         <div className="ml-auto flex items-center gap-1">
           <ThemeToggler />
 
-          <UserMenu />
+          {user && <UserMenu user={user} />}
         </div>
       </div>
     </header>

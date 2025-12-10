@@ -39,17 +39,16 @@ const LOGIN_FORM_TEXTS = {
   footerText: "Don't have an account?",
 } as const;
 
-// Must contain at least one uppercase letter, one lowercase letter, and one number
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/;
 
-const loginFormSchema = z.object({
+export const loginFormSchema = z.object({
   email: z
     .email({ error: "Please provide a valid email address!" })
+    .min(1, "Email is required!")
     .trim()
     .max(50, "Email cannot exceed 50 characters!"),
   password: z
     .string()
-    .trim()
     .min(8, "Password must be at least 8 characters!")
     .refine((value) => passwordRegex.test(value), {
       error:
