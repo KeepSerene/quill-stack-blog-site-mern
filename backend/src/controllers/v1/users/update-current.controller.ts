@@ -56,9 +56,12 @@ export default async function handleUpdateCurrentUser(
     // save updated user
     await user.save();
 
+    // return updated user WITHOUT password for security
+    const updatedUser = await User.findById(userId).select("-__v").exec();
+
     res.status(200).json({
       message: "Current user updated successfully!",
-      user,
+      user: updatedUser,
     });
   } catch (error) {
     logger.error("Error updating current user:", error);

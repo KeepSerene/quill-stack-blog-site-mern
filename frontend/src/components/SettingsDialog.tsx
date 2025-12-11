@@ -31,7 +31,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
-import { AtSign, Loader, Mail } from "lucide-react";
+import { AtSign, Globe, Loader, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import PasswordInput from "@/components/PasswordInput";
 import { toast } from "sonner";
@@ -60,14 +60,23 @@ const profileFormSchema = z.object({
     .regex(
       usernameRegex,
       "Username can only contain letters, numbers, underscores, and hyphens!"
-    ),
+    )
+    .optional()
+    .or(z.literal("")),
   email: z
     .string()
     .min(1, "Email is required!")
     .max(50, "Email cannot exceed 50 characters!")
     .regex(emailRegex, "Please provide a valid email address!")
     .toLowerCase()
-    .trim(),
+    .trim()
+    .optional()
+    .or(z.literal("")),
+  websiteUrl: z
+    .url("Please provide a valid URL!")
+    .max(100, "Website URL cannot exceed 100 characters!")
+    .optional()
+    .or(z.literal("")),
 });
 
 function ProfileSettingsForm() {
@@ -82,35 +91,52 @@ function ProfileSettingsForm() {
     }
   }, [actionResponseData]);
 
-  const defaultValues = {
-    firstName: "",
-    lastName: "",
-    username: user?.username,
-    email: user?.email,
-  };
-
   const form = useForm<z.infer<typeof profileFormSchema>>({
     resolver: zodResolver(profileFormSchema),
-    defaultValues,
+    defaultValues: {
+      firstName: "",
+      lastName: "",
+      username: "",
+      email: "",
+      websiteUrl: "",
+    },
   });
+
+  // reset form values when user data loads
+  useEffect(() => {
+    if (user) {
+      form.reset({
+        firstName: "",
+        lastName: "",
+        username: user.username || "",
+        email: user.email || "",
+        websiteUrl: "",
+      });
+    }
+  }, [user, form]);
 
   const onSubmit = useCallback(
     async (values: z.infer<typeof profileFormSchema>) => {
       try {
-        await fetcher.submit(values, {
+        // only send non-empty values to backend
+        const payload = Object.fromEntries(
+          Object.entries(values).filter(([_, value]) => value !== "")
+        );
+
+        await fetcher.submit(payload, {
           method: "post",
           action: "/settings",
           encType: "application/json",
         });
       } catch (error) {
         console.error("Error submitting profile form:", error);
-        toast.error("Falied to submit profile form!", {
+        toast.error("Failed to submit profile form!", {
           position: "top-center",
           duration: 5000,
         });
       }
     },
-    []
+    [fetcher]
   );
 
   return (
@@ -120,7 +146,7 @@ function ProfileSettingsForm() {
           <h3 className="text-lg font-semibold">Profile</h3>
 
           <p className="text-muted-foreground text-sm">
-            Update your avatar and personal details.
+            Update your personal details.
           </p>
         </header>
 
@@ -188,7 +214,7 @@ function ProfileSettingsForm() {
                 <div className="relative">
                   <AtSign className="size-4 text-muted-foreground pointer-events-none absolute left-3 top-1/2 -translate-y-1/2" />
 
-                  <FormControl defaultValue={user?.username}>
+                  <FormControl>
                     <Input
                       type="text"
                       placeholder="johndoe"
@@ -218,10 +244,40 @@ function ProfileSettingsForm() {
                 <div className="relative">
                   <Mail className="size-4 text-muted-foreground pointer-events-none absolute left-3 top-1/2 -translate-y-1/2" />
 
-                  <FormControl defaultValue={user?.email}>
+                  <FormControl>
                     <Input
                       type="email"
                       placeholder="example@email.com"
+                      className="pl-10"
+                      {...field}
+                    />
+                  </FormControl>
+                </div>
+
+                <FormMessage />
+              </div>
+            </FormItem>
+          )}
+        />
+
+        <Separator className="my-5" />
+
+        {/* Website URL */}
+        <FormField
+          control={form.control}
+          name="websiteUrl"
+          render={({ field }) => (
+            <FormItem className="grid grid-cols-1 lg:grid-cols-[1fr_2fr] items-start gap-2">
+              <FormLabel>Website URL</FormLabel>
+
+              <div className="space-y-2">
+                <div className="relative">
+                  <Globe className="size-4 text-muted-foreground pointer-events-none absolute left-3 top-1/2 -translate-y-1/2" />
+
+                  <FormControl>
+                    <Input
+                      type="url"
+                      placeholder="https://example.com"
                       className="pl-10"
                       {...field}
                     />
@@ -259,7 +315,7 @@ const passwordFormSchema = z
     password: z
       .string()
       .min(8, "Password must be at least 8 characters!")
-      .refine((value) => passwordRegex.test(value), {
+      .regex(passwordRegex, {
         error:
           "Password must contain at least one uppercase letter, one lowercase letter, and one number!",
       }),
@@ -292,20 +348,24 @@ function PasswordSettingsForm() {
   const onSubmit = useCallback(
     async (values: z.infer<typeof passwordFormSchema>) => {
       try {
-        await fetcher.submit(values, {
-          method: "post",
-          action: "/settings",
-          encType: "application/json",
-        });
+        // only send password to backend (not confirmPassword)
+        await fetcher.submit(
+          { password: values.password },
+          {
+            method: "post",
+            action: "/settings",
+            encType: "application/json",
+          }
+        );
       } catch (error) {
         console.error("Error submitting password form:", error);
-        toast.error("Falied to submit password form!", {
+        toast.error("Failed to submit password form!", {
           position: "top-center",
           duration: 5000,
         });
       }
     },
-    []
+    [fetcher]
   );
 
   return (
@@ -314,9 +374,7 @@ function PasswordSettingsForm() {
         <header>
           <h3 className="text-lg font-semibold">Password</h3>
 
-          <p className="text-muted-foreground text-sm">
-            Enter and confirm a new password to change your current password.
-          </p>
+          <p className="text-muted-foreground text-sm">Set a new password...</p>
         </header>
 
         <Separator className="my-5" />
