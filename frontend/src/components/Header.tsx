@@ -14,6 +14,7 @@ import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import ThemeToggler from "@/components/ThemeToggler";
 import UserMenu from "@/components/UserMenu";
+import { Menu, X } from "lucide-react";
 
 function Header({
   className,
@@ -71,6 +72,17 @@ function Header({
           <ThemeToggler />
 
           {user && <UserMenu user={user} />}
+
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            onClick={() => setIsMobileMenuOpen((prev) => !prev)}
+            aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+            className="md:hidden"
+          >
+            {isMobileMenuOpen ? <X /> : <Menu />}
+          </Button>
         </div>
       </div>
     </header>

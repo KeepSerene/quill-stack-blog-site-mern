@@ -3,7 +3,7 @@
  * @license Apache-2.0
  */
 
-import RegisterForm from "@/components/RegisterForm";
+import RegisterForm from "@/components/auth/RegisterForm";
 
 function RegisterPage() {
   return (

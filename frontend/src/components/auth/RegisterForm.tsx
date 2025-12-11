@@ -27,10 +27,10 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import PasswordInput from "@/components/PasswordInput";
-import { Button } from "./ui/button";
+import { Button } from "@/components/ui/button";
 import { Loader, UserPlus2 } from "lucide-react";
-import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
-import { Label } from "./ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 
 type RegisterFormField = "role" | "email" | "password";

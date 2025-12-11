@@ -5,6 +5,8 @@
 
 import CustomLoader from "@/components/CustomLoader";
 import Header from "@/components/Header";
+import { Outlet } from "react-router";
+import Footer from "@/components/Footer";
 
 function RootLayout() {
   return (
@@ -12,6 +14,12 @@ function RootLayout() {
       <CustomLoader className="z-40" />
 
       <Header />
+
+      <main className="grow flex flex-col">
+        <Outlet />
+      </main>
+
+      <Footer />
     </div>
   );
 }

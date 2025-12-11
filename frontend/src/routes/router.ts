@@ -9,6 +9,7 @@ import { createBrowserRouter } from "react-router";
 // Pages
 import LoginPage from "@/pages/auth/Login";
 import RegisterPage from "@/pages/auth/Register";
+import Home from "@/pages/users/Home";
 
 // Layouts
 import RootLayout from "@/layouts/Root";
@@ -20,6 +21,7 @@ import settingsAction from "@/routes/actions/settings";
 
 // Loaders
 import refreshTokenLoader from "@/routes/loaders/refreshTokenLoader";
+import homeLoader from "@/routes/loaders/users/homeLoader";
 
 const router = createBrowserRouter([
   // Auth routes
@@ -44,6 +46,8 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
+        Component: Home,
+        loader: homeLoader,
       },
       {
         path: "blogs",

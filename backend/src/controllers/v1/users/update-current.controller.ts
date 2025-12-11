@@ -43,8 +43,9 @@ export default async function handleUpdateCurrentUser(
     if (password) user.password = password;
     if (firstName) user.firstName = firstName;
     if (lastName) user.lastName = lastName;
-    if (!user.socialLinks) user.socialLinks = {};
 
+    // init social links
+    if (!user.socialLinks) user.socialLinks = {};
     if (websiteUrl) user.socialLinks.website = websiteUrl;
     if (gitHubUrl) user.socialLinks.gitHub = gitHubUrl;
     if (linkedInUrl) user.socialLinks.linkedIn = linkedInUrl;
