@@ -3,7 +3,7 @@
  * @license Apache-2.0
  */
 
-export interface User {
+export interface UserDocument {
   _id: string;
   role: "admin" | "user";
   username: string;
@@ -24,9 +24,9 @@ export interface User {
   updatedAt: string;
 }
 
-export interface Blog {
+export interface BlogDocument {
   title: string;
-  author: User;
+  author: UserDocument;
   content: string;
   slug: string;
   banner: {
@@ -46,8 +46,8 @@ export interface Blog {
 export interface Comment {
   _id: string;
   content: string;
-  user: User | null;
-  blog: Blog;
+  user: UserDocument | null;
+  blog: BlogDocument;
   likeCount: number;
   replies: Comment[];
   createdAt: string;
@@ -111,10 +111,10 @@ export interface ActionResponse<T = unknown> {
 export interface AuthResponse {
   message: string;
   accessToken: string;
-  user: Pick<User, "username" | "email" | "role">;
+  user: Pick<UserDocument, "username" | "email" | "role">;
 }
 
 export interface CreateBlogResponse {
   message: string;
-  blog: Blog;
+  blog: BlogDocument;
 }

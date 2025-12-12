@@ -7,7 +7,7 @@ import type React from "react";
 import { useNavigation } from "react-router";
 import { AnimatePresence, motion } from "motion/react";
 import { cn } from "@/lib/utils";
-import { Loader } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 const fadeInOut = {
   initial: { opacity: 0, translateY: -10 },
@@ -33,7 +33,7 @@ function CustomLoader({ className }: React.ComponentPropsWithoutRef<"div">) {
           )}
           {...fadeInOut}
         >
-          <Loader size={32} className="animate-spin" />
+          <Loader2 size={32} className="animate-spin" />
         </motion.div>
       )}
     </AnimatePresence>

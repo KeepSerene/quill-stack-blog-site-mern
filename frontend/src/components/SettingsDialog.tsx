@@ -31,7 +31,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
-import { AtSign, Globe, Loader, Mail } from "lucide-react";
+import { AtSign, Globe, Loader2, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import PasswordInput from "@/components/PasswordInput";
 import { toast } from "sonner";
@@ -299,7 +299,7 @@ function ProfileSettingsForm() {
           </Button>
 
           <Button type="submit" disabled={isLoading}>
-            {isLoading && <Loader className="size-4 animate-spin" />}
+            {isLoading && <Loader2 className="size-4 animate-spin" />}
             {isLoading ? "Saving..." : "Save"}
           </Button>
         </div>
@@ -428,7 +428,7 @@ function PasswordSettingsForm() {
           </Button>
 
           <Button type="submit" disabled={isLoading}>
-            {isLoading && <Loader className="size-4 animate-spin" />}
+            {isLoading && <Loader2 className="size-4 animate-spin" />}
             {isLoading ? "Updating..." : "Update"}
           </Button>
         </div>

@@ -28,7 +28,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import PasswordInput from "@/components/PasswordInput";
 import { Button } from "@/components/ui/button";
-import { Loader, LogIn } from "lucide-react";
+import { Loader2, LogIn } from "lucide-react";
 import { toast } from "sonner";
 
 type LoginFormField = "email" | "password";
@@ -194,7 +194,7 @@ function LoginForm({
                 >
                   {isLoading ? (
                     <>
-                      <Loader className="size-4 animate-spin" />
+                      <Loader2 className="size-4 animate-spin" />
                       <span>Signing in...</span>
                     </>
                   ) : (

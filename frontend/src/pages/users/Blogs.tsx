@@ -7,9 +7,10 @@ import { cn } from "@/lib/utils";
 import type { HomeLoaderResponse } from "@/routes/loaders/users/homeLoader";
 import type { Variants } from "motion/react";
 import type React from "react";
-import { useLoaderData } from "react-router";
+import { Link, useLoaderData } from "react-router";
 import { motion } from "motion/react";
 import BlogCard from "@/components/BlogCard";
+import { Button } from "@/components/ui/button";
 
 const listVariant: Variants = { to: { transition: { delayChildren: 0.05 } } };
 
@@ -24,11 +25,11 @@ const itemVariant: Variants = {
   },
 };
 
-function RecentBlogs({
+function Blogs({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"section">) {
-  const { recentBlogsData } = useLoaderData<HomeLoaderResponse>();
+  const { allBlogsData } = useLoaderData<HomeLoaderResponse>();
 
   return (
     <section {...props} className={cn("section", className)}>
@@ -41,7 +42,7 @@ function RecentBlogs({
           }}
           className="section-title"
         >
-          Recent Blog Posts
+          All Blog Posts
         </motion.h2>
 
         <motion.ul
@@ -51,13 +52,9 @@ function RecentBlogs({
           variants={listVariant}
           className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4"
         >
-          {recentBlogsData.data.blogs.map(
-            ({ title, content, author, banner, slug, publishedAt }, index) => (
-              <motion.li
-                key={slug}
-                variants={itemVariant}
-                className={cn(index === 0 && "lg:row-span-3")}
-              >
+          {allBlogsData.data.blogs.map(
+            ({ title, content, author, banner, slug, publishedAt }) => (
+              <motion.li key={slug} variants={itemVariant}>
                 <BlogCard
                   bannerUrl={banner.url}
                   bannerWidth={banner.width}
@@ -67,15 +64,29 @@ function RecentBlogs({
                   slug={slug}
                   authorName={`${author.firstName} ${author.lastName}`}
                   publishedAt={publishedAt}
-                  size={index > 0 ? "sm" : "default"}
                 />
               </motion.li>
             )
           )}
         </motion.ul>
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{
+            opacity: 1,
+            transition: { duration: 0.5, ease: "backInOut" },
+          }}
+          className="mt-8 md:mt-10 flex justify-center"
+        >
+          <Button type="button" size="lg" asChild>
+            <Link to="/blogs" viewTransition>
+              See all
+            </Link>
+          </Button>
+        </motion.div>
       </div>
     </section>
   );
 }
 
-export default RecentBlogs;
+export default Blogs;

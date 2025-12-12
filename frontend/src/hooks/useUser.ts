@@ -3,10 +3,10 @@
  * @license Apache-2.0
  */
 
-import type { User } from "@/types";
+import type { UserDocument } from "@/types";
 import { useEffect, useState } from "react";
 
-export type UserProfile = Pick<User, "role" | "username" | "email">;
+export type UserProfile = Pick<UserDocument, "role" | "username" | "email">;
 
 function useUser() {
   const [user, setUser] = useState<UserProfile | undefined>(() => {

@@ -219,6 +219,8 @@
     @apply bg-background font-sans text-foreground tracking-normal antialiased;
     @apply caret-primary selection:bg-primary/20;
     font-feature-settings: "rlig" 1, "calt" 1, "ss01" 1;
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--primary) / 0.3) transparent;
   }
 
   button:not(:disabled),
@@ -229,6 +231,18 @@
   button:disabled,
   [role="button"]:disabled {
     @apply cursor-not-allowed;
+  }
+
+  &::-webkit-scrollbar {
+    @apply w-1 h-1;
+  }
+
+  &::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    @apply bg-primary/30 rounded-full transition-colors hover:bg-primary/40;
   }
 }
 
@@ -435,7 +449,7 @@
     scrollbar-color: hsl(var(--primary) / 0.3) transparent;
 
     &::-webkit-scrollbar {
-      @apply w-2 h-2;
+      @apply w-1 h-1;
     }
 
     &::-webkit-scrollbar-track {

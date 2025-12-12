@@ -4,14 +4,14 @@
  */
 
 import { quillStackApi } from "@/api";
-import type { Blog, PaginatedResponse } from "@/types";
+import type { BlogDocument, PaginatedResponse } from "@/types";
 import { AxiosError } from "axios";
 import { data, redirect, type LoaderFunction } from "react-router";
 import { toast } from "sonner";
 
 export interface HomeLoaderResponse {
-  allBlogsData: PaginatedResponse<Blog, "blogs">;
-  recentBlogsData: PaginatedResponse<Blog, "blogs">;
+  allBlogsData: PaginatedResponse<BlogDocument, "blogs">;
+  recentBlogsData: PaginatedResponse<BlogDocument, "blogs">;
 }
 
 const homeLoader: LoaderFunction = async () => {

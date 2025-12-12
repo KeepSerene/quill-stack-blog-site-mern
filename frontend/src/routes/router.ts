@@ -22,6 +22,7 @@ import settingsAction from "@/routes/actions/settings";
 // Loaders
 import refreshTokenLoader from "@/routes/loaders/refreshTokenLoader";
 import homeLoader from "@/routes/loaders/users/homeLoader";
+import Blogs from "@/pages/users/Blogs";
 
 const router = createBrowserRouter([
   // Auth routes
@@ -51,6 +52,7 @@ const router = createBrowserRouter([
       },
       {
         path: "blogs",
+        Component: Blogs,
       },
       {
         path: "blogs/:slug",
