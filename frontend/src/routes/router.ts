@@ -10,9 +10,12 @@ import { createBrowserRouter } from "react-router";
 import LoginPage from "@/pages/auth/Login";
 import RegisterPage from "@/pages/auth/Register";
 import Home from "@/pages/users/Home";
+import Blogs from "@/pages/users/Blogs";
+import BlogDetails from "@/pages/users/BlogDetails";
 
 // Layouts
 import RootLayout from "@/layouts/Root";
+import AdminLayout from "@/layouts/Admin";
 
 // Actions
 import loginAction from "@/routes/actions/login";
@@ -22,7 +25,8 @@ import settingsAction from "@/routes/actions/settings";
 // Loaders
 import refreshTokenLoader from "@/routes/loaders/refreshTokenLoader";
 import homeLoader from "@/routes/loaders/users/homeLoader";
-import Blogs from "@/pages/users/Blogs";
+import blogsLoader from "@/routes/loaders/users/blogsLoader";
+import blogDetailsLoader from "@/routes/loaders/users/blogDetailsLoader";
 
 const router = createBrowserRouter([
   // Auth routes
@@ -53,39 +57,50 @@ const router = createBrowserRouter([
       {
         path: "blogs",
         Component: Blogs,
+        loader: blogsLoader,
       },
       {
         path: "blogs/:slug",
+        Component: BlogDetails,
+        loader: blogDetailsLoader,
       },
     ],
-  },
-  {
-    path: "/settings",
-    action: settingsAction,
   },
   // Admin routes
   {
     path: "/admin",
+    Component: AdminLayout,
     children: [
       {
         path: "dashboard",
+        handle: { breadcrumb: "Dashboard" },
       },
       {
         path: "blogs",
+        handle: { breadcrumb: "Blogs" },
       },
       {
         path: "blogs/create",
+        handle: { breadcrumb: "Create Blog" },
       },
       {
         path: "blogs/:slug/edit",
+        handle: { breadcrumb: "Edit Blog" },
       },
       {
         path: "users",
+        handle: { breadcrumb: "Users" },
       },
       {
         path: "comments",
+        handle: { breadcrumb: "Comments" },
       },
     ],
+  },
+  // Settings route
+  {
+    path: "/settings",
+    action: settingsAction,
   },
 ]);
 

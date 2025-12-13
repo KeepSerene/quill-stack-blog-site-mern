@@ -28,7 +28,7 @@ function Header({
     <header
       {...props}
       className={cn(
-        "w-full h-16 bg-background border-b flex justify-center items-center fixed left-0 top-0 z-40",
+        "w-full h-16 bg-background/70 backdrop-blur-sm border-b flex justify-center items-center fixed left-0 top-0 z-40",
         className
       )}
     >

@@ -62,7 +62,7 @@ export interface PaginationMeta {
   hasMore: boolean;
 }
 
-// T = The data type (e.g., Blog)
+// T = The data type (e.g., BlogDocument)
 // K = The key name (e.g., "blogs")
 export type PaginatedResponse<T, K extends string> = {
   message: string;

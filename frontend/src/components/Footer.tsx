@@ -47,14 +47,14 @@ function Footer({
 }: React.ComponentPropsWithoutRef<"footer">) {
   return (
     <footer {...props} className={cn("border-t", className)}>
-      <div className="container py-8 grid grid-cols-1 md:grid-cols-[1fr_3fr_1fr] max-md:justify-items-center md:items-center">
-        <Logo />
+      <div className="container py-4 grid grid-cols-1 md:grid-cols-[1fr_3fr_1fr] max-md:justify-items-center md:items-center">
+        <Logo size="sm" />
 
-        <p className="md:justify-self-center order-1 md:order-0 text-muted-foreground max-md:text-center">
+        <p className="md:justify-self-center order-1 md:order-0 text-muted-foreground text-xs md:text-sm max-md:text-center">
           &copy; {new Date().getFullYear()} KeepSerene. All Rights Reserved.
         </p>
 
-        <ul className="max-md:mt-6 max-md:mb-4 flex md:justify-self-end items-center gap-1">
+        <ul className="max-md:my-1 flex md:justify-self-end items-center gap-1">
           {SOCIAL_LINKS.map(({ href, icon: Icon, label, imgSrc }) => (
             <li key={label}>
               <Tooltip>
@@ -68,12 +68,12 @@ function Footer({
                   >
                     <a href={href} target="_blank">
                       {Icon ? (
-                        <Icon className="size-4 sm:size-5" />
+                        <Icon className="size-4" />
                       ) : (
                         <img
                           src={imgSrc}
                           alt={`${label} icon`}
-                          className="size-4 sm:size-5 brightness-0 dark:invert"
+                          className="size-4 brightness-0 dark:invert"
                         />
                       )}
                     </a>

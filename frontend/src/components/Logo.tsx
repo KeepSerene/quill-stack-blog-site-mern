@@ -47,7 +47,7 @@ const Logo: React.FC<LogoProps> = ({
       whileFocus={{ scale: 0.9 }}
       whileTap={{ scale: 0.9 }}
       viewTransition
-      className={cn("inline-flex items-center gap-1", className)}
+      className={cn("w-max inline-flex items-center gap-1", className)}
     >
       {/* Icon */}
       <span className={cn("shrink-0 aspect-square", iconSizeClass)}>
