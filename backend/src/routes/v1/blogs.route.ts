@@ -15,6 +15,8 @@ import handleGetAllBlogs from "@/controllers/v1/blogs/get-all.controller";
 import handleGetBlogBySlug from "@/controllers/v1/blogs/get-by-slug.controller";
 import handleUpdateBlogById from "@/controllers/v1/blogs/update-by-id.controller";
 import handleDeleteBlogById from "@/controllers/v1/blogs/delete-by-id.controller";
+import handleUpdateBlogBySlug from "@/controllers/v1/blogs/update-by-slug.controller";
+import handleDeleteBlogBySlug from "@/controllers/v1/blogs/delete-by-slug.controller";
 
 const router = Router();
 const multerInstance = multer();
@@ -87,9 +89,42 @@ const updateBlogByIdValidation = [
     .withMessage("Status must be either 'draft' or 'published'"),
 ];
 
+const updateBlogBySlugValidation = [
+  param("slug")
+    .exists({ checkFalsy: true })
+    .withMessage("Slug is required!")
+    .isString()
+    .withMessage("Slug must be a string!")
+    .trim()
+    .matches(/^[a-z0-9\-]+$/)
+    .withMessage(
+      "Slug can only contain lowercase letters, numbers, and hyphens!"
+    ),
+  body("title")
+    .optional()
+    .trim()
+    .notEmpty()
+    .withMessage("Title is required!")
+    .isLength({ min: 3, max: 180 })
+    .withMessage("Title must be between 3 and 180 characters!"),
+  body("content")
+    .optional()
+    .trim()
+    .notEmpty()
+    .withMessage("Content is required!")
+    .isLength({ min: 10 })
+    .withMessage("Content must be at least 10 characters!"),
+  body("status")
+    .optional()
+    .isIn(["draft", "published"])
+    .withMessage("Status must be either 'draft' or 'published'"),
+];
+
 const deleteBlogByIdValidation = param("blogId")
   .isMongoId()
   .withMessage("Invalid blog ID!");
+
+const deleteBlogBySlugValidation = getBlogBySlugValidation;
 
 // POST /api/v1/blogs
 router.post(
@@ -127,9 +162,9 @@ router.get(
   handleGetBlogBySlug
 );
 
-// PUT /api/v1/blogs/:blogId
+// PUT /api/v1/blogs/id/:blogId
 router.put(
-  "/:blogId",
+  "/id/:blogId",
   handleAuthenticate,
   handleAuthorize(["admin"]),
   multerInstance.single("banner-image"),
@@ -139,14 +174,36 @@ router.put(
   handleUpdateBlogById
 );
 
-// DELETE /api/v1/blogs/:blogId
+// PUT /api/v1/blogs/:slug
+router.put(
+  "/:slug",
+  handleAuthenticate,
+  handleAuthorize(["admin"]),
+  multerInstance.single("banner-image"),
+  updateBlogBySlugValidation,
+  handleValidationErrors,
+  handleBlogBannerImageUpload("put"),
+  handleUpdateBlogBySlug
+);
+
+// DELETE /api/v1/blogs/id/:blogId
 router.delete(
-  "/:blogId",
+  "/id/:blogId",
   handleAuthenticate,
   handleAuthorize(["admin"]),
   deleteBlogByIdValidation,
   handleValidationErrors,
   handleDeleteBlogById
+);
+
+// DELETE /api/v1/blogs/:slug
+router.delete(
+  "/:slug",
+  handleAuthenticate,
+  handleAuthorize(["admin"]),
+  deleteBlogBySlugValidation,
+  handleValidationErrors,
+  handleDeleteBlogBySlug
 );
 
 export default router;

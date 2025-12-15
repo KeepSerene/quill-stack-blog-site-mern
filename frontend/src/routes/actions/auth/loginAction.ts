@@ -25,7 +25,7 @@ const loginAction: ActionFunction = async ({ request }) => {
     } as ActionResponse<AuthResponse>;
   } catch (err) {
     if (err instanceof AxiosError) {
-      console.error("Error loggin in user:", err);
+      console.error("Error logging in user:", err);
 
       return {
         ok: false,

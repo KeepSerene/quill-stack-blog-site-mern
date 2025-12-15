@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
 const HERO_TEXTS = {
-  title: "Words Crafted, Insights Layered",
+  title: "Words Crafted, Insights Layered!",
   subtitle:
     "A curated space for voices, stories, and ideas that stack up to something bigger.",
 } as const;

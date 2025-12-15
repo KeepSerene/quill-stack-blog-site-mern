@@ -25,6 +25,7 @@ export interface UserDocument {
 }
 
 export interface BlogDocument {
+  _id: string;
   title: string;
   author: UserDocument;
   content: string;
@@ -43,13 +44,13 @@ export interface BlogDocument {
   editedAt: string;
 }
 
-export interface Comment {
+export interface CommentDocument {
   _id: string;
   content: string;
   user: UserDocument | null;
   blog: BlogDocument;
   likeCount: number;
-  replies: Comment[];
+  replies: CommentDocument[];
   createdAt: string;
   updatedAt: string;
 }

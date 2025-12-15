@@ -7,37 +7,43 @@
 import { createBrowserRouter } from "react-router";
 
 // Pages
-import LoginPage from "@/pages/auth/Login";
-import RegisterPage from "@/pages/auth/Register";
+import Login from "@/pages/auth/Login";
+import Register from "@/pages/auth/Register";
 import Home from "@/pages/users/Home";
 import Blogs from "@/pages/users/Blogs";
 import BlogDetails from "@/pages/users/BlogDetails";
+import GlobalError from "@/pages/errors/GlobalError";
+import Dashboard from "@/pages/admins/Dashboard";
 
 // Layouts
 import RootLayout from "@/layouts/Root";
 import AdminLayout from "@/layouts/Admin";
 
 // Actions
-import loginAction from "@/routes/actions/login";
-import registerAction from "@/routes/actions/register";
-import settingsAction from "@/routes/actions/settings";
+import loginAction from "@/routes/actions/auth/loginAction";
+import registerAction from "@/routes/actions/auth/registerAction";
+import settingsAction from "@/routes/actions/users/settingsAction";
+import blogEditAction from "@/routes/actions/admins/blogEditAction";
+import blogsAction from "@/routes/actions/admins/blogsAction";
 
 // Loaders
 import refreshTokenLoader from "@/routes/loaders/refreshTokenLoader";
 import homeLoader from "@/routes/loaders/users/homeLoader";
 import blogsLoader from "@/routes/loaders/users/blogsLoader";
 import blogDetailsLoader from "@/routes/loaders/users/blogDetailsLoader";
+import adminLoader from "@/routes/loaders/admins/adminLoader";
+import dashboardLoader from "@/routes/loaders/admins/dashboardLoader";
 
 const router = createBrowserRouter([
   // Auth routes
   {
     path: "/login",
-    Component: LoginPage,
+    Component: Login,
     action: loginAction,
   },
   {
     path: "/register",
-    Component: RegisterPage,
+    Component: Register,
     action: registerAction,
   },
   {
@@ -48,6 +54,7 @@ const router = createBrowserRouter([
   {
     path: "/",
     Component: RootLayout,
+
     children: [
       {
         index: true,
@@ -70,13 +77,18 @@ const router = createBrowserRouter([
   {
     path: "/admin",
     Component: AdminLayout,
+    loader: adminLoader,
+    ErrorBoundary: GlobalError,
     children: [
       {
         path: "dashboard",
+        Component: Dashboard,
+        loader: dashboardLoader,
         handle: { breadcrumb: "Dashboard" },
       },
       {
         path: "blogs",
+        action: blogsAction,
         handle: { breadcrumb: "Blogs" },
       },
       {
@@ -85,6 +97,7 @@ const router = createBrowserRouter([
       },
       {
         path: "blogs/:slug/edit",
+        action: blogEditAction,
         handle: { breadcrumb: "Edit Blog" },
       },
       {
