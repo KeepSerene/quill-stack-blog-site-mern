@@ -16,6 +16,9 @@ import type { DashboardLoaderResponse } from "@/routes/loaders/admins/dashboardL
 import { MessageSquareHeart, Text, Users2 } from "lucide-react";
 import { Link, useLoaderData } from "react-router";
 import BlogsTable, { columns } from "@/components/BlogsTable";
+import { Fragment } from "react";
+import CommentCard from "@/components/CommentCard";
+import { Separator } from "@/components/ui/separator";
 
 function Dashboard() {
   const { users, userCount, blogs, blogCount, comments, commentCount } =
@@ -97,6 +100,49 @@ function Dashboard() {
           <BlogsTable data={blogs} columns={columns} />
         </CardContent>
       </Card>
+
+      {/* Recent comments: comment cards */}
+      <div className="grid grid-cols-1 xl:grid-cols-[2fr_1fr] gap-4">
+        <Card className="py-4 gap-4">
+          <CardHeader className="px-4 flex items-center gap-2.5">
+            <div className="max-w-max bg-muted text-muted-foreground rounded-lg p-2">
+              <MessageSquareHeart size={18} />
+            </div>
+
+            <CardTitle className="text-lg font-normal">
+              Recent Comments
+            </CardTitle>
+
+            <CardAction className="ml-auto">
+              <Button type="button" variant="link" size="sm" asChild>
+                <Link to="/admin/comments">See all</Link>
+              </Button>
+            </CardAction>
+          </CardHeader>
+
+          <CardContent className="px-4">
+            {comments.map(
+              (
+                { _id, user, blog, content, likeCount, createdAt },
+                index,
+                array
+              ) => (
+                <Fragment key={_id}>
+                  <CommentCard
+                    user={user}
+                    blog={blog}
+                    content={content}
+                    likeCount={likeCount}
+                    createdAt={createdAt}
+                  />
+
+                  {index < array.length - 1 && <Separator className="my-1" />}
+                </Fragment>
+              )
+            )}
+          </CardContent>
+        </Card>
+      </div>
     </main>
   );
 }

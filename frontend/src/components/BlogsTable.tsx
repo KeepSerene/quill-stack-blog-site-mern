@@ -93,6 +93,7 @@ function BlogActionsDropdown({ blog }: { blog: BlogDocument }) {
           </Link>
         </DropdownMenuItem>
 
+        {/* Publish/unpublish action */}
         <AlertDialog>
           <AlertDialogTrigger type="button" asChild>
             <DropdownMenuItem
@@ -152,6 +153,7 @@ function BlogActionsDropdown({ blog }: { blog: BlogDocument }) {
 
         <DropdownMenuSeparator />
 
+        {/* Delete action */}
         <AlertDialog>
           <AlertDialogTrigger type="button" asChild>
             <DropdownMenuItem
@@ -389,7 +391,7 @@ const BlogsTable = ({ data, columns }: BlogsTableProps) => {
         ) : (
           <TableRow>
             <TableCell colSpan={columns.length} className="h-24 text-center">
-              No results
+              Looks like there are no blogs here. Why not add one?
             </TableCell>
           </TableRow>
         )}
