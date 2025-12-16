@@ -18,7 +18,7 @@ import {
   View,
 } from "lucide-react";
 import Avatar from "react-avatar";
-import { getReadingTime, getUsername } from "@/lib/utils";
+import { getReadingTime, getUserName } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
 import type { DropdownMenuProps } from "@radix-ui/react-dropdown-menu";
 import { useCallback, useMemo } from "react";
@@ -164,12 +164,12 @@ function BlogDetails() {
           <div className="flex items-center gap-3">
             <Avatar
               email={blog.author.email}
-              name={getUsername(blog.author)}
+              name={getUserName(blog.author)}
               size="32"
               round
             />
 
-            <span>{getUsername(blog.author)}</span>
+            <span>{getUserName(blog.author)}</span>
           </div>
 
           <Separator

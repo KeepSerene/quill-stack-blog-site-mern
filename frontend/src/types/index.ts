@@ -48,7 +48,7 @@ export interface CommentDocument {
   _id: string;
   content: string;
   user: UserDocument | null;
-  blog: BlogDocument;
+  blog: BlogDocument | null;
   likeCount: number;
   replies: CommentDocument[];
   createdAt: string;

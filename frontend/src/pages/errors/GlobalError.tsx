@@ -36,7 +36,7 @@ function GlobalError() {
         </p>
 
         <Button type="button" onClick={() => navigate(-1)}>
-          Go back
+          Go Back
         </Button>
       </main>
     );

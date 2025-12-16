@@ -19,8 +19,9 @@ import BlogsTable, { columns } from "@/components/BlogsTable";
 import { Fragment } from "react";
 import CommentCard from "@/components/CommentCard";
 import { Separator } from "@/components/ui/separator";
+import UserCard from "@/components/UserCard";
 
-function Dashboard() {
+function AdminDashboard() {
   const { users, userCount, blogs, blogCount, comments, commentCount } =
     useLoaderData() as DashboardLoaderResponse;
   const currentUser = useUser();
@@ -101,8 +102,9 @@ function Dashboard() {
         </CardContent>
       </Card>
 
-      {/* Recent comments: comment cards */}
+      {/* Recent comments + New users */}
       <div className="grid grid-cols-1 xl:grid-cols-[2fr_1fr] gap-4">
+        {/* Recent comments */}
         <Card className="py-4 gap-4">
           <CardHeader className="px-4 flex items-center gap-2.5">
             <div className="max-w-max bg-muted text-muted-foreground rounded-lg p-2">
@@ -142,9 +144,52 @@ function Dashboard() {
             )}
           </CardContent>
         </Card>
+
+        {/* New users */}
+        <Card className="py-4 gap-4">
+          <CardHeader className="px-4 flex items-center gap-2.5">
+            <div className="max-w-max bg-muted text-muted-foreground rounded-lg p-2">
+              <Users2 size={18} />
+            </div>
+
+            <CardTitle className="text-lg font-normal">New Users</CardTitle>
+
+            <CardAction className="ml-auto">
+              <Button type="button" variant="link" size="sm" asChild>
+                <Link to="/admin/users">See all</Link>
+              </Button>
+            </CardAction>
+          </CardHeader>
+
+          <CardContent className="px-4">
+            {users.map(
+              ({
+                _id,
+                role,
+                username,
+                firstName,
+                lastName,
+                email,
+                createdAt,
+              }) => (
+                <UserCard
+                  key={_id}
+                  userId={_id}
+                  role={role}
+                  username={username}
+                  firstName={firstName}
+                  lastName={lastName}
+                  email={email}
+                  createdAt={createdAt}
+                  currentUser={currentUser}
+                />
+              )
+            )}
+          </CardContent>
+        </Card>
       </div>
     </main>
   );
 }
 
-export default Dashboard;
+export default AdminDashboard;

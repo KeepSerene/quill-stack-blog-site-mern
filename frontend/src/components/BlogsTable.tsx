@@ -23,7 +23,7 @@ import {
 import type { BlogDocument, UserDocument } from "@/types";
 import { Link, useFetcher } from "react-router";
 import Avatar from "react-avatar";
-import { cn, getUsername } from "@/lib/utils";
+import { cn, getUserName } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { formatDistanceToNowStrict } from "date-fns";
 import {
@@ -259,12 +259,12 @@ export const columns: ColumnDef<BlogDocument>[] = [
         <div className="flex items-center gap-2">
           <Avatar
             email={author.email}
-            name={getUsername(author)}
+            name={getUserName(author)}
             size="24"
             className="rounded-md"
           />
 
-          <p>{getUsername(author)}</p>
+          <p>{getUserName(author)}</p>
         </div>
       );
     },

@@ -11,10 +11,23 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function getUsername(user: UserDocument) {
-  const { firstName, lastName, username } = user;
+type UserNameFields = {
+  username: string;
+  firstName?: string;
+  lastName?: string;
+};
 
-  return firstName || lastName ? [firstName, lastName].join(" ") : username;
+export function getUserName(
+  user: UserNameFields | UserDocument | null | undefined
+): string {
+  if (!user) {
+    return "Anonymous";
+  }
+
+  const { firstName, lastName, username } = user;
+  const fullName = [firstName, lastName].filter(Boolean).join(" ");
+
+  return fullName || username;
 }
 
 /**

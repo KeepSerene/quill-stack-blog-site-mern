@@ -13,7 +13,8 @@ import Home from "@/pages/users/Home";
 import Blogs from "@/pages/users/Blogs";
 import BlogDetails from "@/pages/users/BlogDetails";
 import GlobalError from "@/pages/errors/GlobalError";
-import Dashboard from "@/pages/admins/Dashboard";
+import AdminDashboard from "@/pages/admins/AdminDashboard";
+import AdminBlogs from "@/pages/admins/AdminBlogs";
 
 // Layouts
 import RootLayout from "@/layouts/Root";
@@ -25,6 +26,7 @@ import registerAction from "@/routes/actions/auth/registerAction";
 import settingsAction from "@/routes/actions/users/settingsAction";
 import blogEditAction from "@/routes/actions/admins/blogEditAction";
 import blogsAction from "@/routes/actions/admins/blogsAction";
+import allUsersAction from "@/routes/actions/admins/allUsersAction";
 
 // Loaders
 import refreshTokenLoader from "@/routes/loaders/refreshTokenLoader";
@@ -82,12 +84,13 @@ const router = createBrowserRouter([
     children: [
       {
         path: "dashboard",
-        Component: Dashboard,
+        Component: AdminDashboard,
         loader: dashboardLoader,
         handle: { breadcrumb: "Dashboard" },
       },
       {
         path: "blogs",
+        Component: AdminBlogs,
         action: blogsAction,
         handle: { breadcrumb: "Blogs" },
       },
@@ -102,6 +105,7 @@ const router = createBrowserRouter([
       },
       {
         path: "users",
+        action: allUsersAction,
         handle: { breadcrumb: "Users" },
       },
       {
