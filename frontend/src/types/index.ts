@@ -47,8 +47,8 @@ export interface BlogDocument {
 export interface CommentDocument {
   _id: string;
   content: string;
-  user: UserDocument | null;
-  blog: BlogDocument | null;
+  user: UserDocument | string; // can be populated or just an ID
+  blog: BlogDocument | string; // can be populated or just an ID
   likeCount: number;
   replies: CommentDocument[];
   createdAt: string;

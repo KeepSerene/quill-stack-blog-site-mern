@@ -19,7 +19,10 @@ router.get("/", (_, res) => {
     message: "API is up and running!",
     status: "ok",
     version: "1.0.0",
-    timestamp: new Date().toISOString(),
+    timestamp: new Date(Date.now()).toLocaleString("en-IN", {
+      dateStyle: "long",
+      timeStyle: "short",
+    }),
   });
 });
 

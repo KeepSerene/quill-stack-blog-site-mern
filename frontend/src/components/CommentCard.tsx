@@ -18,8 +18,8 @@ import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Link } from "react-router";
 
 interface CommentCardProps {
-  user: UserDocument | null;
-  blog: BlogDocument | null;
+  user: UserDocument | null; // can be null if user was deleted
+  blog: BlogDocument | null; // can be null if blog was deleted
   content: string;
   likeCount: number;
   createdAt: string;
@@ -37,6 +37,7 @@ const CommentCard = ({
       tabIndex={0}
       className="rounded-xl p-4 flex flex-col @md:flex-row items-start gap-4 group hover:bg-accent/25 focus-within:bg-accent/25"
     >
+      {/* User avatar and info section */}
       <Avatar email={user?.email} name={getUserName(user)} size="40" round />
 
       <div className="mr-auto flex flex-col gap-2">
@@ -46,6 +47,7 @@ const CommentCard = ({
           {user ? (
             <p className="text-muted-foreground text-sm">@{user.username}</p>
           ) : (
+            // Deleted account indicator with tooltip
             <div className="text-destructive/80 text-sm italic">
               <Tooltip delayDuration={250}>
                 <TooltipTrigger>{getUserName(user)}</TooltipTrigger>
@@ -74,7 +76,7 @@ const CommentCard = ({
           </div>
         </div>
 
-        {/* Comment */}
+        {/* Comment content */}
         <p className="max-w-[60ch]">{content}</p>
 
         {/* Like and delete buttons */}
@@ -102,7 +104,7 @@ const CommentCard = ({
         </div>
       </div>
 
-      {/* Associated blog */}
+      {/* Associated blog preview section */}
       {blog && (
         <>
           <div className="@max-3xl:hidden max-w-80 grid grid-cols-[120px_minmax(200px,1fr)] gap-3">
@@ -121,6 +123,7 @@ const CommentCard = ({
             </p>
           </div>
 
+          {/* Link to blog post */}
           <Button
             type="button"
             variant="ghost"
@@ -129,10 +132,11 @@ const CommentCard = ({
           >
             <Link
               to={`/blogs/${blog.slug}`}
-              aria-label="Visit post"
+              aria-label="Visit article"
+              title="Visit article"
               viewTransition
             >
-              <span className="@md:hidden">Visit post</span>
+              <span className="@md:hidden">Visit article</span>
               <ExternalLink className="size-4" />
             </Link>
           </Button>

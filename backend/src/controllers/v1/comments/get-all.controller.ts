@@ -24,6 +24,14 @@ export default async function handleGetAllComments(
       .sort({ createdAt: -1 })
       .limit(limit)
       .skip(offset)
+      .populate({
+        path: "user",
+        select: "username email firstName lastName role",
+      })
+      .populate({
+        path: "blog",
+        select: "title slug banner",
+      })
       .lean()
       .exec();
 

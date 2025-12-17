@@ -40,7 +40,7 @@ const homeLoader: LoaderFunction = async () => {
     return { allBlogsData, recentBlogsData } as HomeLoaderResponse;
   } catch (error) {
     if (error instanceof AxiosError) {
-      const hasTokenExpired = error.response?.data.message.includes("expired");
+      const hasTokenExpired = error.response?.data.message?.includes("expired");
 
       if (hasTokenExpired) {
         localStorage.removeItem("access-token");

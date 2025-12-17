@@ -4,12 +4,12 @@
  */
 
 import { quillStackApi } from "@/api";
-import type { BlogDocument, PaginatedResponse } from "@/types";
+import type { PaginatedResponse, UserDocument } from "@/types";
 import { AxiosError } from "axios";
 import { data, redirect, type LoaderFunction } from "react-router";
 import { toast } from "sonner";
 
-const blogsLoader: LoaderFunction = async ({ request }) => {
+const allUsersLoader: LoaderFunction = async ({ request }) => {
   const accessToken = localStorage.getItem("access-token");
 
   if (!accessToken) {
@@ -18,19 +18,22 @@ const blogsLoader: LoaderFunction = async ({ request }) => {
       duration: 5000,
     });
 
-    return;
+    return redirect("/");
   }
 
   const url = new URL(request.url);
 
   try {
-    const response = await quillStackApi.get("/blogs", {
+    const response = await quillStackApi.get("/users", {
       headers: { Authorization: `Bearer ${accessToken}` },
-      params: Object.fromEntries(url.searchParams),
+      params: Object.fromEntries(url.searchParams.entries()),
     });
-    const data = response.data as PaginatedResponse<BlogDocument, "blogs">;
+    const responseData = response.data as PaginatedResponse<
+      UserDocument,
+      "users"
+    >;
 
-    return data;
+    return responseData;
   } catch (error) {
     if (error instanceof AxiosError) {
       const hasTokenExpired = error.response?.data.message?.includes("expired");
@@ -52,4 +55,4 @@ const blogsLoader: LoaderFunction = async ({ request }) => {
   }
 };
 
-export default blogsLoader;
+export default allUsersLoader;

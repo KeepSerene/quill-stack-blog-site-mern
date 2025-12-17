@@ -30,7 +30,7 @@ export default async function handleDeleteComment(req: Request, res: Response) {
       });
     }
 
-    const blog = await Blog.findById(comment.blogId)
+    const blog = await Blog.findById(comment.blog)
       .select("commentCount")
       .exec();
 
@@ -48,7 +48,7 @@ export default async function handleDeleteComment(req: Request, res: Response) {
       });
     }
 
-    if (comment.userId !== currentUserId && currentUser.role !== "admin") {
+    if (comment.user !== currentUserId && currentUser.role !== "admin") {
       logger.warn("A user tried to delete a comment without permissions!", {
         userId: currentUserId,
         comment,

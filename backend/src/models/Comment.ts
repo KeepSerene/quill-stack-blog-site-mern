@@ -6,19 +6,19 @@
 import { model, Schema, type Types } from "mongoose";
 
 export interface CommentDocument {
-  blogId: Types.ObjectId;
-  userId: Types.ObjectId;
+  blog: Types.ObjectId;
+  user: Types.ObjectId;
   content: string;
 }
 
 const commentSchema = new Schema<CommentDocument>(
   {
-    blogId: {
+    blog: {
       type: Schema.Types.ObjectId,
       ref: "Blog",
       required: [true, "Blog ID is required!"],
     },
-    userId: {
+    user: {
       type: Schema.Types.ObjectId,
       ref: "User",
       required: [true, "User ID is required!"],

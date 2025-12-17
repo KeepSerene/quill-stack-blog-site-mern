@@ -15,6 +15,8 @@ import BlogDetails from "@/pages/users/BlogDetails";
 import GlobalError from "@/pages/errors/GlobalError";
 import AdminDashboard from "@/pages/admins/AdminDashboard";
 import AdminBlogs from "@/pages/admins/AdminBlogs";
+import AdminComments from "@/pages/admins/AdminComments";
+import AdminCreateBlog from "@/pages/admins/AdminCreateBlog";
 
 // Layouts
 import RootLayout from "@/layouts/Root";
@@ -35,6 +37,10 @@ import blogsLoader from "@/routes/loaders/users/blogsLoader";
 import blogDetailsLoader from "@/routes/loaders/users/blogDetailsLoader";
 import adminLoader from "@/routes/loaders/admins/adminLoader";
 import dashboardLoader from "@/routes/loaders/admins/dashboardLoader";
+import allBlogsLoader from "@/routes/loaders/admins/allBlogsLoader";
+import commentsLoader from "@/routes/loaders/admins/allCommentsLoader";
+import allUsersLoader from "@/routes/loaders/admins/allUsersLoader";
+import AdminUsers from "@/pages/admins/AdminUsers";
 
 const router = createBrowserRouter([
   // Auth routes
@@ -92,10 +98,12 @@ const router = createBrowserRouter([
         path: "blogs",
         Component: AdminBlogs,
         action: blogsAction,
+        loader: allBlogsLoader,
         handle: { breadcrumb: "Blogs" },
       },
       {
         path: "blogs/create",
+        Component: AdminCreateBlog,
         handle: { breadcrumb: "Create Blog" },
       },
       {
@@ -105,11 +113,15 @@ const router = createBrowserRouter([
       },
       {
         path: "users",
+        Component: AdminUsers,
         action: allUsersAction,
+        loader: allUsersLoader,
         handle: { breadcrumb: "Users" },
       },
       {
         path: "comments",
+        Component: AdminComments,
+        loader: commentsLoader,
         handle: { breadcrumb: "Comments" },
       },
     ],

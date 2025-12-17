@@ -32,8 +32,8 @@ export default async function handleCreateComment(req: Request, res: Response) {
 
     const cleanedContent = domPurify.sanitize(content);
     const newComment = await Comment.create({
-      blogId,
-      userId,
+      blog: blogId,
+      user: userId,
       content: cleanedContent,
     });
 

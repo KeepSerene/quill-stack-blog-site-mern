@@ -158,7 +158,11 @@ function LoginForm({
                       <FormLabel>Email</FormLabel>
 
                       <FormControl>
-                        <Input placeholder="email@example.com" {...field} />
+                        <Input
+                          autoFocus
+                          placeholder="email@example.com"
+                          {...field}
+                        />
                       </FormControl>
 
                       <FormMessage />

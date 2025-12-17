@@ -7,6 +7,7 @@ import { quillStackApi } from "@/api";
 import type { ActionFunction } from "react-router";
 import type { ActionResponse, AuthResponse } from "@/types";
 import { AxiosError } from "axios";
+import { toast } from "sonner";
 
 const registerAction: ActionFunction = async ({ request }) => {
   try {
@@ -20,6 +21,7 @@ const registerAction: ActionFunction = async ({ request }) => {
 
     localStorage.setItem("access-token", responseData.accessToken);
     localStorage.setItem("user", JSON.stringify(responseData.user));
+    toast.success("Welcome aboard!");
 
     return {
       ok: true,

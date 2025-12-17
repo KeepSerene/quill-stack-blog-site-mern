@@ -13,7 +13,7 @@ function AdminLayout() {
     <SidebarProvider>
       <AppSidebar />
 
-      <SidebarInset className="max-h-[calc(100dvh-16px)] overflow-auto relative">
+      <SidebarInset className="max-h-[calc(100dvh-16px)] overflow-auto custom-scrollbar relative">
         <AppTopBar />
 
         <Outlet />

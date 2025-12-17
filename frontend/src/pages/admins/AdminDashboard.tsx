@@ -20,6 +20,7 @@ import { Fragment } from "react";
 import CommentCard from "@/components/CommentCard";
 import { Separator } from "@/components/ui/separator";
 import UserCard from "@/components/UserCard";
+import type { BlogDocument, UserDocument } from "@/types";
 
 function AdminDashboard() {
   const { users, userCount, blogs, blogCount, comments, commentCount } =
@@ -28,7 +29,7 @@ function AdminDashboard() {
 
   return (
     <main className="container p-4 space-y-4">
-      <h2 className="text-2xl font-semibold">Dashboard</h2>
+      <h2 className="text-2xl font-semibold">Overview</h2>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* User count */}
@@ -131,8 +132,8 @@ function AdminDashboard() {
               ) => (
                 <Fragment key={_id}>
                   <CommentCard
-                    user={user}
-                    blog={blog}
+                    user={user as UserDocument}
+                    blog={blog as BlogDocument}
                     content={content}
                     likeCount={likeCount}
                     createdAt={createdAt}

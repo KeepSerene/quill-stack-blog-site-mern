@@ -374,7 +374,7 @@ function PasswordSettingsForm() {
         <header>
           <h3 className="text-lg font-semibold">Password</h3>
 
-          <p className="text-muted-foreground text-sm">Set a new password...</p>
+          <p className="text-muted-foreground text-sm">Set a new password.</p>
         </header>
 
         <Separator className="my-5" />

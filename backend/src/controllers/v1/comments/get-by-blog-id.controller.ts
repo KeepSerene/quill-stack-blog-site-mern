@@ -24,7 +24,7 @@ export default async function handleGetCommentsByBlogId(
       });
     }
 
-    const allComments = await Comment.find({ blogId })
+    const allComments = await Comment.find({ blog: blogId })
       .select("-__v")
       .sort({ createdAt: -1 })
       .lean()

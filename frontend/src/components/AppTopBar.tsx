@@ -46,7 +46,7 @@ function AppTopBar({
       </div>
 
       <div className="ml-auto flex items-center gap-2">
-        {location.pathname === "/admin/blogs/create" && (
+        {location.pathname !== "/admin/blogs/create" && (
           <Button type="button" asChild>
             <Link
               to="/admin/blogs/create"
