@@ -1,6 +1,9 @@
 /**
  * @copyright 2025 Dhrubajyoti Bhattacharjee
  * @license Apache-2.0
+ *
+ * Optional authentication middleware - allows requests to proceed
+ * whether authenticated or not. Attaches user info if token is valid.
  */
 
 import type { NextFunction, Request, Response } from "express";
@@ -9,18 +12,16 @@ import type { Types } from "mongoose";
 import jwt from "jsonwebtoken";
 import logger from "@/lib/winston";
 
-export default async function handleAuthenticate(
+export default async function handleOptionalAuthenticate(
   req: Request,
   res: Response,
   next: NextFunction
 ) {
   const authHeader = req.headers.authorization;
 
+  // no token provided - continue as unauthenticated user
   if (!authHeader?.startsWith("Bearer ")) {
-    return res.status(401).json({
-      code: "AuthorizationError",
-      message: "Access denied, no token provided!",
-    });
+    return next();
   }
 
   const token = authHeader?.split(" ")?.[1];
@@ -33,24 +34,16 @@ export default async function handleAuthenticate(
 
     return next();
   } catch (error) {
+    // token validation failed - log it but continue as unauthenticated
     if (error instanceof jwt.TokenExpiredError) {
-      return res.status(401).json({
-        code: "TokenExpired",
-        message: "Token has expired!",
-      });
+      logger.debug("Expired token in optional auth", { error: error.message });
+    } else if (error instanceof jwt.JsonWebTokenError) {
+      logger.debug("Invalid token in optional auth", { error: error.message });
+    } else {
+      logger.error("Error in optional authentication:", error);
     }
 
-    if (error instanceof jwt.JsonWebTokenError) {
-      return res.status(401).json({
-        code: "InvalidToken",
-        message: "Invalid token!",
-      });
-    }
-
-    logger.error("Error refreshing token:", error);
-    res.status(500).json({
-      code: "ServerError",
-      message: "Internal server error!",
-    });
+    // continue without authentication
+    return next();
   }
 }

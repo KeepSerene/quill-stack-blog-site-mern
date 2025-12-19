@@ -1,7 +1,8 @@
 {
   "compilerOptions": {
-    "target": "es6",
-    "module": "commonjs",
+    "target": "es2022",
+    "module": "esnext",
+    "moduleResolution": "bundler",
     "baseUrl": "./",
     "rootDir": "src",
     "outDir": "dist",
@@ -13,7 +14,7 @@
     "paths": {
       "@/*": ["src/*"]
     },
-    "typeRoots": ["./src/@types"]
+    "typeRoots": ["./src/@types", "./node_modules/@types"]
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules"]

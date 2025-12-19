@@ -50,7 +50,9 @@ const CommentCard = ({
             // Deleted account indicator with tooltip
             <div className="text-destructive/80 text-sm italic">
               <Tooltip delayDuration={250}>
-                <TooltipTrigger>{getUserName(user)}</TooltipTrigger>
+                <TooltipTrigger type="button">
+                  {getUserName(user)}
+                </TooltipTrigger>
                 <TooltipContent>This account has been removed!</TooltipContent>
               </Tooltip>
             </div>

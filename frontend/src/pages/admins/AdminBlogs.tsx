@@ -193,7 +193,7 @@ function AdminBlogs() {
                   ? "Navigating to first page"
                   : "Go to first page"
               }
-              title="Go to first page"
+              title="First page"
               className="size-8 p-0"
             >
               {isLoading && lastNavigationAction === "first" ? (
@@ -214,7 +214,7 @@ function AdminBlogs() {
                   ? "Navigating to previous page"
                   : "Go to previous page"
               }
-              title="Go to previous page"
+              title="Previous page"
               className="size-8 p-0"
             >
               {isLoading && lastNavigationAction === "previous" ? (
@@ -233,7 +233,7 @@ function AdminBlogs() {
               aria-label={
                 isLoading && lastNavigationAction === "next"
                   ? "Navigating to next page"
-                  : "Go to next page"
+                  : "Next page"
               }
               title="Go to next page"
               className="size-8 p-0"
@@ -256,7 +256,7 @@ function AdminBlogs() {
                   ? "Navigating to last page"
                   : "Go to last page"
               }
-              title="Go to last page"
+              title="Last page"
               className="size-8 p-0"
             >
               {isLoading && lastNavigationAction === "last" ? (

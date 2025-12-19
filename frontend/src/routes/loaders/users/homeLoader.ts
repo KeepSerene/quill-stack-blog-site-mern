@@ -7,7 +7,6 @@ import { quillStackApi } from "@/api";
 import type { BlogDocument, PaginatedResponse } from "@/types";
 import { AxiosError } from "axios";
 import { data, redirect, type LoaderFunction } from "react-router";
-import { toast } from "sonner";
 
 export interface HomeLoaderResponse {
   allBlogsData: PaginatedResponse<BlogDocument, "blogs">;
@@ -17,25 +16,22 @@ export interface HomeLoaderResponse {
 const homeLoader: LoaderFunction = async () => {
   const accessToken = localStorage.getItem("access-token");
 
-  if (!accessToken) {
-    toast.error("Access token is missing!", {
-      position: "top-center",
-      duration: 5000,
-    });
-
-    return;
-  }
-
   try {
-    const { data: recentBlogsData } = await quillStackApi.get("/blogs", {
-      headers: { Authorization: `Bearer ${accessToken}` },
-      params: { limit: 4 },
-    });
+    const headers = accessToken
+      ? { Authorization: `Bearer ${accessToken}` }
+      : {};
 
-    const { data: allBlogsData } = await quillStackApi.get("/blogs", {
-      headers: { Authorization: `Bearer ${accessToken}` },
-      params: { limit: 12, offset: 4 },
-    });
+    const [{ data: recentBlogsData }, { data: allBlogsData }] =
+      await Promise.all([
+        quillStackApi.get("/blogs", {
+          headers,
+          params: { limit: 4 },
+        }),
+        quillStackApi.get("/blogs", {
+          headers,
+          params: { limit: 12, offset: 4 },
+        }),
+      ]);
 
     return { allBlogsData, recentBlogsData } as HomeLoaderResponse;
   } catch (error) {

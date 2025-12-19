@@ -17,6 +17,7 @@ import handleUpdateBlogById from "@/controllers/v1/blogs/update-by-id.controller
 import handleDeleteBlogById from "@/controllers/v1/blogs/delete-by-id.controller";
 import handleUpdateBlogBySlug from "@/controllers/v1/blogs/update-by-slug.controller";
 import handleDeleteBlogBySlug from "@/controllers/v1/blogs/delete-by-slug.controller";
+import handleOptionalAuthenticate from "@/middlewares/optional-authenticate";
 
 const router = Router();
 const multerInstance = multer();
@@ -145,8 +146,9 @@ router.post(
 // GET /api/v1/blogs
 router.get(
   "/",
-  handleAuthenticate,
-  handleAuthorize(["admin", "user"]),
+  // handleAuthenticate,
+  handleOptionalAuthenticate,
+  // handleAuthorize(["admin", "user"]),
   getAllBlogsValidation,
   handleValidationErrors,
   handleGetAllBlogs
@@ -155,8 +157,9 @@ router.get(
 // GET /api/v1/blogs/:slug
 router.get(
   "/:slug",
-  handleAuthenticate,
-  handleAuthorize(["admin", "user"]),
+  // handleAuthenticate,
+  handleOptionalAuthenticate,
+  // handleAuthorize(["admin", "user"]),
   getBlogBySlugValidation,
   handleValidationErrors,
   handleGetBlogBySlug

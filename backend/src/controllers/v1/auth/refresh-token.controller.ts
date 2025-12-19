@@ -8,7 +8,7 @@ import RefreshToken from "@/models/RefreshToken";
 import type { Request, Response } from "express";
 import { generateAccessToken, validateAndDecodeRefreshToken } from "@/lib/jwt";
 import type { Types } from "mongoose";
-import { JsonWebTokenError, TokenExpiredError } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 
 export default async function handleRefreshToken(req: Request, res: Response) {
   const refreshToken = req.cookies["refresh-token"] as string;
@@ -33,14 +33,14 @@ export default async function handleRefreshToken(req: Request, res: Response) {
       accessToken,
     });
   } catch (error) {
-    if (error instanceof TokenExpiredError) {
+    if (error instanceof jwt.TokenExpiredError) {
       return res.status(401).json({
         code: "TokenExpired",
         message: "Token has expired!",
       });
     }
 
-    if (error instanceof JsonWebTokenError) {
+    if (error instanceof jwt.JsonWebTokenError) {
       return res.status(401).json({
         code: "InvalidToken",
         message: "Invalid token!",

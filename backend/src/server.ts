@@ -14,9 +14,13 @@ import limiter from "@/lib/express-rate-limit";
 import { connectToDB, disconnectFromDB } from "@/lib/mongoose";
 import v1Router from "@/routes/v1";
 import logger from "@/lib/winston";
+import path from "node:path";
 
 // Express app initialization
 const app = express();
+
+// Get __dirname equivalent in ES modules
+const __dirname = import.meta.dirname;
 
 // Configure CORS
 const allowed = new Set(configs.WHITELISTED_ORIGINS);
@@ -57,13 +61,27 @@ app.use(limiter);
     // API routes
     app.use("/api/v1", v1Router);
 
-    // 404 error handler - must be after all routes
-    app.use((req, res) => {
-      res.status(404).json({
-        error: "Route not found!",
-        path: req.path,
+    // Production: serve static files and handle client-side routing
+    if (configs.NODE_ENV === "production") {
+      const frontendDistPath = path.join(__dirname, "../../frontend/dist");
+
+      // serve static files from the React build
+      app.use(express.static(frontendDistPath));
+
+      // catch-all route: for any route not matched above, serve index.html
+      // this allows React Router to handle routing on the client side
+      app.get("/{*any}", (_, res) => {
+        res.sendFile(path.join(frontendDistPath, "index.html"));
       });
-    });
+    } else {
+      // Development: 404 error handler for API routes only
+      app.use((req, res) => {
+        res.status(404).json({
+          error: "Route not found!",
+          path: req.path,
+        });
+      });
+    }
 
     // Global error handler
     app.use((err: Error, req: express.Request, res: express.Response) => {

@@ -162,7 +162,7 @@ function AdminDashboard() {
             </CardAction>
           </CardHeader>
 
-          <CardContent className="px-4">
+          <CardContent className="px-4 space-y-2">
             {users.map(
               ({
                 _id,

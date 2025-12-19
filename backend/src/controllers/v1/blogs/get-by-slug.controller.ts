@@ -9,17 +9,19 @@ import User from "@/models/User";
 import type { Request, Response } from "express";
 
 export default async function handleGetBlogBySlug(req: Request, res: Response) {
-  const userId = req.user?.id;
+  const userId = req.user?.id; // optional - may be undefined for public access
   const { slug } = req.params;
 
   try {
-    const user = await User.findById(userId).select("role").lean().exec();
+    let userRole = "user"; // default to regular user
 
-    if (!user) {
-      return res.status(404).json({
-        code: "NotFound",
-        message: "No logged-in user found!",
-      });
+    // If user is authenticated, check their role
+    if (userId) {
+      const user = await User.findById(userId).select("role").lean().exec();
+
+      if (user) {
+        userRole = user.role;
+      }
     }
 
     const blog = await Blog.findOne({ slug })
@@ -35,9 +37,10 @@ export default async function handleGetBlogBySlug(req: Request, res: Response) {
       });
     }
 
-    if (user.role === "user" && blog.status === "draft") {
-      logger.warn("A user tried to access a draft blog!", {
-        userId,
+    // Only admins can view draft blogs
+    if (userRole === "user" && blog.status === "draft") {
+      logger.warn("Attempt to access a draft blog", {
+        userId: userId || "unauthenticated",
         blog: {
           _id: blog._id,
           title: blog.title,

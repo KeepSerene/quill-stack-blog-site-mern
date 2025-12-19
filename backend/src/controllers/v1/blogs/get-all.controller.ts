@@ -14,27 +14,29 @@ interface BlogStatus {
 }
 
 export default async function handleGetAllBlogs(req: Request, res: Response) {
-  const userId = req.user?.id;
+  const userId = req.user?.id; // optional - may be undefined for public access
   const limit =
     parseInt(req.query.limit as string) || configs.DEFAULT_RESPONSE_LIMIT;
   const offset =
     parseInt(req.query.offset as string) || configs.DEFAULT_RESPONSE_OFFSET;
 
   try {
-    const user = await User.findById(userId).select("role").lean().exec();
+    let userRole = "user"; // default to regular user (sees only published)
 
-    if (!user) {
-      return res.status(404).json({
-        code: "NotFound",
-        message: "User not found!",
-      });
+    // If user is authenticated, check their role
+    if (userId) {
+      const user = await User.findById(userId).select("role").lean().exec();
+
+      if (user) {
+        userRole = user.role;
+      }
     }
 
     const statusQuery: BlogStatus = {};
 
-    if (user.role === "user") {
+    // Only admins can see draft blogs
+    if (userRole === "user") {
       statusQuery.status = "published";
-      // admin sees both draft and published (no filter)
     }
 
     const blogCount = await Blog.countDocuments(statusQuery);

@@ -88,14 +88,18 @@ function Toolbar({ className, ...props }: React.ComponentProps<"div">) {
   const isAnyHeadingActive = editor.isActive("heading");
 
   return (
-    <div {...props} className={cn("p-2 flex items-center gap-1", className)}>
+    <div
+      {...props}
+      className={cn("p-2 flex items-center gap-1 flex-wrap", className)}
+    >
+      {/* Undo */}
       <Tooltip>
         <TooltipTrigger type="button" asChild>
           <Button
             type="button"
             variant="ghost"
             size="icon"
-            onClick={() => editor.commands.undo()}
+            onClick={() => editor.chain().focus().undo().run()}
             disabled={!editor.can().undo()}
             aria-label="Undo"
           >
@@ -110,15 +114,16 @@ function Toolbar({ className, ...props }: React.ComponentProps<"div">) {
         </TooltipContent>
       </Tooltip>
 
+      {/* Redo */}
       <Tooltip>
         <TooltipTrigger type="button" asChild>
           <Button
             type="button"
             variant="ghost"
             size="icon"
-            onClick={() => editor.commands.redo()}
+            onClick={() => editor.chain().focus().redo().run()}
             disabled={!editor.can().redo()}
-            aria-label="Undo"
+            aria-label="Redo"
           >
             <Redo2 className="size-4" />
           </Button>
@@ -136,6 +141,7 @@ function Toolbar({ className, ...props }: React.ComponentProps<"div">) {
         className="data-[orientation=vertical]:h-4"
       />
 
+      {/* Headings */}
       <DropdownMenu>
         <Tooltip>
           <TooltipTrigger type="button" asChild>
@@ -151,7 +157,7 @@ function Toolbar({ className, ...props }: React.ComponentProps<"div">) {
             </DropdownMenuTrigger>
           </TooltipTrigger>
 
-          <TooltipContent side="bottom">Heading</TooltipContent>
+          <TooltipContent side="bottom">Headings</TooltipContent>
         </Tooltip>
 
         <DropdownMenuContent
@@ -160,7 +166,7 @@ function Toolbar({ className, ...props }: React.ComponentProps<"div">) {
         >
           <DropdownMenuGroup>
             <DropdownMenuLabel className="text-muted-foreground">
-              Heading
+              Headings
             </DropdownMenuLabel>
 
             {HEADINGS.map(({ label, Icon, level }) => (
@@ -179,12 +185,13 @@ function Toolbar({ className, ...props }: React.ComponentProps<"div">) {
         </DropdownMenuContent>
       </DropdownMenu>
 
+      {/* Bullet list */}
       <Tooltip>
         <TooltipTrigger type="button" asChild>
           <Toggle
             type="button"
             onClick={() => editor.chain().focus().toggleBulletList().run()}
-            disabled={!editor.chain().focus().toggleBulletList().run()}
+            disabled={!editor.can().toggleBulletList()}
             pressed={editor.isActive("bulletList")}
             aria-label="Toggle bullet list"
             className="aria-pressed:bg-secondary aria-pressed:text-secondary-foreground"
@@ -196,12 +203,13 @@ function Toolbar({ className, ...props }: React.ComponentProps<"div">) {
         <TooltipContent side="bottom">Bullet List</TooltipContent>
       </Tooltip>
 
+      {/* Ordered list */}
       <Tooltip>
         <TooltipTrigger type="button" asChild>
           <Toggle
             type="button"
             onClick={() => editor.chain().focus().toggleOrderedList().run()}
-            disabled={!editor.chain().focus().toggleOrderedList().run()}
+            disabled={!editor.can().toggleOrderedList()}
             pressed={editor.isActive("orderedList")}
             aria-label="Toggle ordered list"
             className="aria-pressed:bg-secondary aria-pressed:text-secondary-foreground"
@@ -213,12 +221,13 @@ function Toolbar({ className, ...props }: React.ComponentProps<"div">) {
         <TooltipContent side="bottom">Ordered List</TooltipContent>
       </Tooltip>
 
+      {/* Blockquote */}
       <Tooltip>
         <TooltipTrigger type="button" asChild>
           <Toggle
             type="button"
             onClick={() => editor.chain().focus().toggleBlockquote().run()}
-            disabled={!editor.chain().focus().toggleBlockquote().run()}
+            disabled={!editor.can().toggleBlockquote()}
             pressed={editor.isActive("blockquote")}
             aria-label="Toggle blockquote"
             className="aria-pressed:bg-secondary aria-pressed:text-secondary-foreground"
@@ -234,12 +243,13 @@ function Toolbar({ className, ...props }: React.ComponentProps<"div">) {
         </TooltipContent>
       </Tooltip>
 
+      {/* Code block */}
       <Tooltip>
         <TooltipTrigger type="button" asChild>
           <Toggle
             type="button"
             onClick={() => editor.chain().focus().toggleCodeBlock().run()}
-            disabled={!editor.chain().focus().toggleCodeBlock().run()}
+            disabled={!editor.can().toggleCodeBlock()}
             pressed={editor.isActive("codeBlock")}
             aria-label="Toggle code block"
             className="aria-pressed:bg-secondary aria-pressed:text-secondary-foreground"
@@ -260,12 +270,13 @@ function Toolbar({ className, ...props }: React.ComponentProps<"div">) {
         className="data-[orientation=vertical]:h-4"
       />
 
+      {/* Bold */}
       <Tooltip>
         <TooltipTrigger type="button" asChild>
           <Toggle
             type="button"
             onClick={() => editor.chain().focus().toggleBold().run()}
-            disabled={!editor.chain().focus().toggleBold().run()}
+            disabled={!editor.can().toggleBold()}
             pressed={editor.isActive("bold")}
             aria-label="Toggle bold"
             className="aria-pressed:bg-secondary aria-pressed:text-secondary-foreground"
@@ -281,12 +292,13 @@ function Toolbar({ className, ...props }: React.ComponentProps<"div">) {
         </TooltipContent>
       </Tooltip>
 
+      {/* Italic */}
       <Tooltip>
         <TooltipTrigger type="button" asChild>
           <Toggle
             type="button"
             onClick={() => editor.chain().focus().toggleItalic().run()}
-            disabled={!editor.chain().focus().toggleItalic().run()}
+            disabled={!editor.can().toggleItalic()}
             pressed={editor.isActive("italic")}
             aria-label="Toggle italic"
             className="aria-pressed:bg-secondary aria-pressed:text-secondary-foreground"
@@ -302,12 +314,13 @@ function Toolbar({ className, ...props }: React.ComponentProps<"div">) {
         </TooltipContent>
       </Tooltip>
 
+      {/* Strikethrough */}
       <Tooltip>
         <TooltipTrigger type="button" asChild>
           <Toggle
             type="button"
             onClick={() => editor.chain().focus().toggleStrike().run()}
-            disabled={!editor.chain().focus().toggleStrike().run()}
+            disabled={!editor.can().toggleStrike()}
             pressed={editor.isActive("strike")}
             aria-label="Toggle strike"
             className="aria-pressed:bg-secondary aria-pressed:text-secondary-foreground"
@@ -323,13 +336,14 @@ function Toolbar({ className, ...props }: React.ComponentProps<"div">) {
         </TooltipContent>
       </Tooltip>
 
+      {/* Inline code */}
       <Tooltip>
         <TooltipTrigger type="button" asChild>
           <Toggle
             type="button"
             onClick={() => editor.chain().focus().toggleCode().run()}
-            disabled={!editor.chain().focus().toggleCode().run()}
-            pressed={editor.isActive("strike")}
+            disabled={!editor.can().toggleCode()}
+            pressed={editor.isActive("code")}
             aria-label="Toggle inline code"
             className="aria-pressed:bg-secondary aria-pressed:text-secondary-foreground"
           >

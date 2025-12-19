@@ -17,6 +17,7 @@ import { Input } from "@/components/ui/input";
 import { AnimatePresence, motion } from "motion/react";
 import { Textarea } from "@/components/ui/textarea";
 import TiptapEditor from "@/components/TiptapEditor";
+import { toast } from "sonner";
 
 interface BlogEditorData {
   bannerImage?: Blob;
@@ -52,6 +53,57 @@ const BlogEditor: React.FC<BlogEditorProps> = ({ defaultValues, onSubmit }) => {
     [bannerPreviewUrl]
   );
 
+  const validateForm = (): boolean => {
+    if (!data.title.trim()) {
+      toast.error("Title is required", {
+        position: "top-center",
+      });
+      return false;
+    }
+
+    if (data.title.trim().length < 3) {
+      toast.error("Title must be at least 3 characters long", {
+        position: "top-center",
+      });
+      return false;
+    }
+
+    if (
+      !data.content ||
+      data.content.trim() === "" ||
+      data.content === "<p></p>"
+    ) {
+      toast.error("Content is required", {
+        position: "top-center",
+      });
+      return false;
+    }
+
+    if (!defaultValues?.bannerUrl && !data.bannerImage) {
+      toast.error("Banner image is required", {
+        position: "top-center",
+      });
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleSubmit = (status: BlogStatus) => {
+    if (!validateForm()) {
+      return;
+    }
+
+    onSubmit(
+      {
+        bannerImage: data.bannerImage,
+        title: data.title,
+        content: data.content,
+      },
+      status
+    );
+  };
+
   return (
     <div className="space-y-5 relative">
       <div className="min-h-9 relative isolate">
@@ -77,6 +129,17 @@ const BlogEditor: React.FC<BlogEditorProps> = ({ defaultValues, onSubmit }) => {
                       const file = event.target.files?.[0];
 
                       if (!file) return;
+
+                      const maxSize = 2 * 1024 * 1024; // 2MB in bytes
+
+                      if (file.size > maxSize) {
+                        toast.error("Image size must be less than 2MB", {
+                          position: "top-center",
+                        });
+                        event.target.value = ""; // reset input
+
+                        return;
+                      }
 
                       setData((prev) => ({
                         ...prev,
@@ -128,7 +191,7 @@ const BlogEditor: React.FC<BlogEditorProps> = ({ defaultValues, onSubmit }) => {
             >
               <img
                 src={bannerPreviewUrl}
-                alt={data.title}
+                alt={data.title || "Blog banner"}
                 className="size-full object-cover"
               />
             </motion.figure>
@@ -156,7 +219,23 @@ const BlogEditor: React.FC<BlogEditorProps> = ({ defaultValues, onSubmit }) => {
           onUpdate={({ editor }) => {
             setData((prev) => ({ ...prev, content: editor.getHTML() }));
           }}
+          immediatelyRender={false}
         />
+      </div>
+
+      {/* Action buttons */}
+      <div className="bg-background py-4 flex justify-end items-center gap-2 sticky bottom-0 isolate after:w-full after:h-10 after:bg-linear-to-t after:from-background after:to-transparent after:absolute after:bottom-full after:-z-10 after:pointer-events-none">
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() => handleSubmit("draft")}
+        >
+          Save as Draft
+        </Button>
+
+        <Button type="button" onClick={() => handleSubmit("published")}>
+          {status === "draft" ? "Publish" : "Save"}
+        </Button>
       </div>
     </div>
   );
