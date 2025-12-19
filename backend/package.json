@@ -3,11 +3,11 @@
   "version": "1.0.0",
   "type": "module",
   "description": "",
-  "main": "dist/server.js",
+  "main": "src/server.ts",
   "scripts": {
     "dev": "tsx watch --env-file=.env src/server.ts",
-    "build": "tsc && tsc-alias",
-    "start": "node dist/server.js"
+    "build": "echo 'No build needed - using tsx'",
+    "start": "tsx src/server.ts"
   },
   "keywords": [],
   "author": "Dhrubajyoti Bhattacharjee",
@@ -23,8 +23,6 @@
     "@types/ms": "^2.1.0",
     "@types/multer": "^2.0.0",
     "@types/node": "^24.10.1",
-    "tsc-alias": "^1.8.16",
-    "tsx": "^4.20.6",
     "typescript": "^5.9.3"
   },
   "dependencies": {
@@ -43,6 +41,7 @@
     "mongoose": "^9.0.0",
     "ms": "^2.1.3",
     "multer": "^2.0.2",
+    "tsx": "^4.20.6",
     "winston": "^3.18.3"
   }
 }
