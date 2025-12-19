@@ -44,7 +44,24 @@ const corsOptions: CorsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(helmet());
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        imgSrc: [
+          "'self'",
+          "data:",
+          "https://res.cloudinary.com", // allow Cloudinary images
+          "https://*.cloudinary.com", // allow any Cloudinary subdomain
+        ],
+        scriptSrc: ["'self'", "'unsafe-inline'"], // if you have inline scripts
+        styleSrc: ["'self'", "'unsafe-inline'"], // for inline styles
+        fontSrc: ["'self'", "https://fonts.gstatic.com"], // if using Google Fonts
+      },
+    },
+  })
+);
 app.use(cookieParser());
 app.use(
   compression({
