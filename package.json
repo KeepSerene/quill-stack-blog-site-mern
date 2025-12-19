@@ -1,7 +1,7 @@
 {
   "name": "quill-stack",
   "version": "1.0.0",
-  "description": "MERN Blog Site",
+  "description": "QuillStack is a feature-rich MERN stack blogging platform with admin dashboard, rich text editor, and modern UI. Create, publish, and manage your blog content effortlessly.",
   "main": "index.js",
   "scripts": {
     "build": "cd backend && pnpm install && pnpm build && cd ../frontend && pnpm install && pnpm build",
