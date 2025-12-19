@@ -1,0 +1,14 @@
+{
+  "name": "quill-stack",
+  "version": "1.0.0",
+  "description": "MERN Blog Site",
+  "main": "index.js",
+  "scripts": {
+    "build": "cd backend && pnpm install && pnpm build && cd ../frontend && pnpm install && pnpm build",
+    "start": "cd backend && pnpm start"
+  },
+  "keywords": [],
+  "author": "Dhrubajyoti Bhattacharjee",
+  "license": "Apache-2.0",
+  "packageManager": "pnpm@10.24.0"
+}
