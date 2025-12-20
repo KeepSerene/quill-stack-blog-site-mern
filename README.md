@@ -141,7 +141,6 @@ This project serves as a comprehensive portfolio piece, demonstrating modern web
 
 ![Admin Dashboard](./frontend/public/screenshots/quill-stack.png)
 _Comprehensive admin dashboard with metrics_
-e
 
 ---
 
@@ -248,8 +247,8 @@ VITE_API_BASE_URL=http://localhost:3000/api/v1
    ```
 
 3. **Open your browser**
-   - Frontend: http://localhost:5173
-   - Backend: http://localhost:3000
+   - Frontend: `http://localhost:5173`
+   - Backend: `http://localhost:3000`
 
 #### Production Build
 
@@ -397,7 +396,7 @@ quill-stack/
 | DELETE | `/likes/blogs/:blogId` | Unlike a blog       | Yes           | User/Admin |
 | POST   | `/views/blogs/:blogId` | Increment blog view | Yes           | User/Admin |
 
-### Request/Response Examples
+### Request/Response Examples (may change!)
 
 #### Register User
 
@@ -579,7 +578,7 @@ limitations under the License.
 
 ## 📧 Contact
 
-**Dhrubajyoti Bhattacharjee**
+**_[Dhrubajyoti Bhattacharjee](https://github.com/KeepSerene)_**
 
 **Live Demo**: [https://quill-stack.onrender.com](https://quill-stack.onrender.com)
 
