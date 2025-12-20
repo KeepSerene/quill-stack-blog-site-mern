@@ -44,6 +44,7 @@ import allBlogsLoader from "@/routes/loaders/admins/allBlogsLoader";
 import commentsLoader from "@/routes/loaders/admins/allCommentsLoader";
 import allUsersLoader from "@/routes/loaders/admins/allUsersLoader";
 import publicLoader from "@/routes/loaders/auth/publicLoader";
+import settingsLoader from "@/routes/loaders/users/settingsLoader";
 
 const router = createBrowserRouter([
   {
@@ -66,7 +67,7 @@ const router = createBrowserRouter([
         path: "/refresh-token",
         loader: refreshTokenLoader,
       },
-      // Admin + user routes
+      // User routes
       {
         path: "/",
         Component: RootLayout,
@@ -136,10 +137,10 @@ const router = createBrowserRouter([
           },
         ],
       },
-      // Settings route
       {
         path: "/settings",
         action: settingsAction,
+        loader: settingsLoader,
       },
     ],
   },

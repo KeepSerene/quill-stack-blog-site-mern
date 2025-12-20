@@ -8,9 +8,10 @@
 import { redirect, type LoaderFunction } from "react-router";
 
 const publicLoader: LoaderFunction = async () => {
+  const user = localStorage.getItem("user");
   const accessToken = localStorage.getItem("access-token");
 
-  if (accessToken) {
+  if (user && accessToken) {
     return redirect("/");
   }
 

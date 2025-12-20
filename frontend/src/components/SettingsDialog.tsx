@@ -16,7 +16,6 @@ import {
 } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useFetcher } from "react-router";
-import useUser from "@/hooks/useUser";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useCallback, useEffect } from "react";
@@ -36,6 +35,7 @@ import { Button } from "@/components/ui/button";
 import PasswordInput from "@/components/PasswordInput";
 import { toast } from "sonner";
 import type { ActionResponse } from "@/types";
+import useUser from "@/hooks/useUser";
 
 const usernameRegex = /^[a-zA-Z0-9_-]+$/;
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -82,14 +82,9 @@ const profileFormSchema = z.object({
 function ProfileSettingsForm() {
   const fetcher = useFetcher();
   const actionResponseData = fetcher.data as ActionResponse;
-  const user = useUser();
   const isLoading = fetcher.state !== "idle";
 
-  useEffect(() => {
-    if (actionResponseData && actionResponseData.ok) {
-      toast.success("Your profile has been updated successfully!");
-    }
-  }, [actionResponseData]);
+  const user = useUser();
 
   const form = useForm<z.infer<typeof profileFormSchema>>({
     resolver: zodResolver(profileFormSchema),
@@ -102,18 +97,45 @@ function ProfileSettingsForm() {
     },
   });
 
-  // reset form values when user data loads
+  // watch form values to enable/disable submit button
+  const formValues = form.watch();
+
+  // check if form has any non-empty values
+  const hasNonEmptyValues = Object.values(formValues).some(
+    (value) => value !== ""
+  );
+
+  // check if any form value differs from current user data
+  const hasChanges = user
+    ? Object.entries(formValues).some(([key, value]) => {
+        if (value === "") return false;
+
+        // get the current value from user object or nested socialLinks
+        let currentValue: string | undefined;
+
+        if (key === "websiteUrl") {
+          currentValue = (user as any).socialLinks?.website;
+        } else {
+          currentValue = (user as any)[key];
+        }
+
+        return value !== currentValue;
+      })
+    : false;
+
+  const isSubmitDisabled = !hasNonEmptyValues || !hasChanges || isLoading;
+
   useEffect(() => {
-    if (user) {
-      form.reset({
-        firstName: "",
-        lastName: "",
-        username: user.username || "",
-        email: user.email || "",
-        websiteUrl: "",
-      });
+    if (actionResponseData && actionResponseData.ok) {
+      // revalidate the settings route to fetch fresh user data
+      // triggers the loader which updates localStorage
+      fetcher.load("/settings");
+
+      // reset form after successful submission
+      form.reset();
+      toast.success("Your profile has been updated successfully!");
     }
-  }, [user, form]);
+  }, [actionResponseData, form, fetcher]);
 
   const onSubmit = useCallback(
     async (values: z.infer<typeof profileFormSchema>) => {
@@ -298,7 +320,7 @@ function ProfileSettingsForm() {
             <DialogClose disabled={isLoading}>Cancel</DialogClose>
           </Button>
 
-          <Button type="submit" disabled={isLoading}>
+          <Button type="submit" disabled={isSubmitDisabled}>
             {isLoading && <Loader2 className="size-4 animate-spin" />}
             {isLoading ? "Saving..." : "Save"}
           </Button>
@@ -331,12 +353,6 @@ function PasswordSettingsForm() {
   const actionResponseData = fetcher.data as ActionResponse;
   const isLoading = fetcher.state !== "idle";
 
-  useEffect(() => {
-    if (actionResponseData && actionResponseData.ok) {
-      toast.success("Your password has been updated successfully!");
-    }
-  }, [actionResponseData]);
-
   const form = useForm<z.infer<typeof passwordFormSchema>>({
     resolver: zodResolver(passwordFormSchema),
     defaultValues: {
@@ -344,6 +360,23 @@ function PasswordSettingsForm() {
       confirmPassword: "",
     },
   });
+
+  const formValues = form.watch();
+
+  const isSubmitDisabled =
+    !formValues.password || !formValues.confirmPassword || isLoading;
+
+  useEffect(() => {
+    if (actionResponseData && actionResponseData.ok) {
+      // revalidate the settings route to fetch fresh user data
+      // triggers the loader which updates localStorage
+      fetcher.load("/settings");
+
+      // reset form after successful submission
+      form.reset();
+      toast.success("Your password has been updated successfully!");
+    }
+  }, [actionResponseData, form, fetcher]);
 
   const onSubmit = useCallback(
     async (values: z.infer<typeof passwordFormSchema>) => {
@@ -427,7 +460,7 @@ function PasswordSettingsForm() {
             <DialogClose disabled={isLoading}>Cancel</DialogClose>
           </Button>
 
-          <Button type="submit" disabled={isLoading}>
+          <Button type="submit" disabled={isSubmitDisabled}>
             {isLoading && <Loader2 className="size-4 animate-spin" />}
             {isLoading ? "Updating..." : "Update"}
           </Button>

@@ -10,7 +10,7 @@ export type UserProfile = Pick<UserDocument, "role" | "username" | "email">;
 
 function useUser() {
   const [user, setUser] = useState<UserProfile | undefined>(() => {
-    // Initialize state from localStorage on mount
+    // initialize state from localStorage on mount
     const userJson = localStorage.getItem("user");
 
     if (userJson) {
@@ -26,27 +26,33 @@ function useUser() {
     return undefined;
   });
 
-  // listen for storage events (when localStorage is updated in other tabs)
+  // listen for storage events to update user state across components
+  // the settingsLoader updates localStorage, which triggers this event
   useEffect(() => {
-    const handleStorageChange = (event: StorageEvent) => {
-      if (event.key === "user") {
-        if (event.newValue) {
-          try {
-            setUser(JSON.parse(event.newValue) as UserProfile);
-          } catch (error) {
-            console.error("Error parsing user data from storage event:", error);
-            setUser(undefined);
-          }
-        } else {
+    // listen for custom localStorage change events in the same tab
+    // this handles updates from the settings dialog immediately
+    const handleCustomStorageChange = () => {
+      const userJson = localStorage.getItem("user");
+      if (userJson) {
+        try {
+          setUser(JSON.parse(userJson) as UserProfile);
+        } catch (error) {
+          console.error("Error parsing user data:", error);
           setUser(undefined);
         }
+      } else {
+        setUser(undefined);
       }
     };
 
-    window.addEventListener("storage", handleStorageChange);
+    // see settingsLoader.ts
+    window.addEventListener("localStorageChange", handleCustomStorageChange);
 
     return () => {
-      window.removeEventListener("storage", handleStorageChange);
+      window.removeEventListener(
+        "localStorageChange",
+        handleCustomStorageChange
+      );
     };
   }, []);
 

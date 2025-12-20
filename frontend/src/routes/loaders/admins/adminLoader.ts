@@ -15,10 +15,11 @@ export interface AdminLoaderResponse {
 }
 
 const adminLoader: LoaderFunction = async () => {
+  const user = localStorage.getItem("user");
   const accessToken = localStorage.getItem("access-token");
 
-  if (!accessToken) {
-    toast.error("Access token is missing!", {
+  if (!user || !accessToken) {
+    toast.error("Looks like you've been signed out.", {
       position: "top-center",
       duration: 5000,
     });

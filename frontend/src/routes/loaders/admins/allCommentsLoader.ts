@@ -10,10 +10,11 @@ import { data, redirect, type LoaderFunction } from "react-router";
 import { toast } from "sonner";
 
 const commentsLoader: LoaderFunction = async ({ request }) => {
+  const user = localStorage.getItem("user");
   const accessToken = localStorage.getItem("access-token");
 
-  if (!accessToken) {
-    toast.error("Access token is missing!", {
+  if (!user || !accessToken) {
+    toast.error("Looks like you've been signed out.", {
       position: "top-center",
       duration: 5000,
     });
