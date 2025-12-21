@@ -512,7 +512,6 @@ The following features are planned for future releases:
 ### Backend
 
 - [ ] **Email Notifications**: Notify users of new comments, likes, etc.
-- [ ] **Forgot Password**: Password reset functionality
 - [ ] **Blog Categories**: Full category system implementation
 - [ ] **Blog Tags**: Tagging system for better organization
 - [ ] **Analytics**: Detailed analytics for admins
